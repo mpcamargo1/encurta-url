@@ -1,6 +1,7 @@
 package com.encurtaurl.principal.api.utils;
 
 import com.encurtaurl.principal.api.exception.ChaveInvalidaException;
+import com.encurtaurl.principal.api.exception.IDInvalidoException;
 
 import java.util.HashMap;
 
@@ -19,13 +20,16 @@ public class Base62 {
     }
 
     public static String codificar(long id) {
+        if (id < 0) {
+            throw new IDInvalidoException(id);
+        }
 
         StringBuilder builder = new StringBuilder();
 
         long quociente = id;
 
         while (quociente > 0) {
-            int indiceAlfabeto = (int) quociente % BASE;
+            int indiceAlfabeto = (int) (quociente % BASE);
             builder.append(alfabeto[indiceAlfabeto]);
 
             quociente = quociente / BASE;
