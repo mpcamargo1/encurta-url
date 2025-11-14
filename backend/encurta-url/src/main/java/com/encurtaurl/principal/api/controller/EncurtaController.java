@@ -1,6 +1,7 @@
 package com.encurtaurl.principal.api.controller;
 
 import com.encurtaurl.principal.api.service.EncurtaService;
+import com.encurtaurl.principal.api.utils.Base62;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ public class EncurtaController {
 
     @PostMapping
     public ResponseEntity<String> encurtarURL() {
-        // TODO: Implementar lógica para encurtar a URL.
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 }
