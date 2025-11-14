@@ -1,6 +1,6 @@
 package com.encurtaurl.principal.api.utils;
 
-import com.encurtaurl.principal.api.exception.NumeroBase62InvalidoException;
+import com.encurtaurl.principal.api.exception.ChaveInvalidaException;
 
 import java.util.HashMap;
 
@@ -37,7 +37,7 @@ public class Base62 {
     public static long decodificar(String chaveBase62) {
 
         if (chaveBase62 == null || chaveBase62.isBlank()) {
-            throw new NumeroBase62InvalidoException(chaveBase62);
+            throw new ChaveInvalidaException(chaveBase62);
         }
 
         char[] chaveBase62Invertida = new StringBuilder(chaveBase62).reverse().toString().toCharArray();
@@ -49,7 +49,7 @@ public class Base62 {
             Long valorDecimal = mapaInverso.getOrDefault(c, null);
 
             if (valorDecimal == null) {
-                throw new NumeroBase62InvalidoException(chaveBase62);
+                throw new ChaveInvalidaException(chaveBase62);
             }
 
             acumulador += valorDecimal * (long) Math.pow(BASE, i);
