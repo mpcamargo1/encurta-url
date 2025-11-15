@@ -38,7 +38,6 @@ public class LimitadorRequisicaoFilter implements Filter {
 
         if (contador == null || contador == 1) {
             redisTemplate.expire(chave, intervalo, TimeUnit.SECONDS);
-            return;
         }
 
         if (contador >= maximoRequisicao) {
