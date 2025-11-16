@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import java.net.URI;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "shortUrl",
@@ -14,29 +16,29 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class EncurtaResponse {
 
     @JsonProperty("shortUrl")
-    private String urlEncurtada;
+    private URI urlEncurtada;
     @JsonProperty("originalUrl")
-    private String urlOriginal;
+    private URI urlOriginal;
     @JsonProperty("createdAt")
     private String criadoEm;
 
     @JsonProperty("shortUrl")
-    public String getUrlEncurtada() {
+    public URI getUrlEncurtada() {
         return urlEncurtada;
     }
 
     @JsonProperty("shortUrl")
-    public void setUrlEncurtada(String urlEncurtada) {
+    public void setUrlEncurtada(URI urlEncurtada) {
         this.urlEncurtada = urlEncurtada;
     }
 
     @JsonProperty("originalUrl")
-    public String getUrlOriginal() {
+    public URI getUrlOriginal() {
         return urlOriginal;
     }
 
     @JsonProperty("originalUrl")
-    public void setUrlOriginal(String urlOriginal) {
+    public void setUrlOriginal(URI urlOriginal) {
         this.urlOriginal = urlOriginal;
     }
 

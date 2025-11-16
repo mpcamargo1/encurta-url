@@ -1,9 +1,9 @@
 package com.encurtaurl.principal.api.model.DTOs;
 
+import com.encurtaurl.principal.api.validacao.url.ValidaURL;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.NotBlank;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 })
 public class EncurtaRequest {
 
-    @NotBlank
+    @ValidaURL
     @JsonProperty("longUrl")
     private String urlOriginal;
     @JsonProperty("customAlias")

@@ -5,6 +5,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // Apenas para sinalizar que é um Singleton
 public class CriaURL {
@@ -15,7 +17,7 @@ public class CriaURL {
     @Value("${encurtaurl.protocolo}")
     private String protocolo;
 
-    public String obterURLEncurtada(String hash) {
+    public URI obterURLEncurtada(String hash) {
         StringBuilder builder = new StringBuilder();
 
         builder.append(protocolo);
@@ -24,6 +26,6 @@ public class CriaURL {
         builder.append("/");
         builder.append(hash);
 
-        return builder.toString();
+        return URI.create(builder.toString());
     }
 }

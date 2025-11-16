@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.Random;
 
 @Service
@@ -24,7 +25,7 @@ public class EncurtaService {
 
         String hash = Base62.codificar(new Random().nextLong(0, Long.MAX_VALUE));
 
-        resposta.setUrlOriginal(urlOriginal);
+        resposta.setUrlOriginal(URI.create(urlOriginal));
         resposta.setUrlEncurtada(criaURL.obterURLEncurtada(hash));
 
         return resposta;
