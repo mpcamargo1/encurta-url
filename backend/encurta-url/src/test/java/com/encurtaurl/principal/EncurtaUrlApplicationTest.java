@@ -16,13 +16,14 @@ public class EncurtaUrlApplicationTest {
 
     @Container
     public static CassandraContainer<?> cassandra =
-            new CassandraContainer<>("cassandra:5.0.6")
-                    .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(240)));
+            new CassandraContainer<>("cassandra:4.1")
+                    .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(240)))
+                    .withInitScript(".docker/init.cql");
 
     @Container
     @SuppressWarnings("resource")
     public static GenericContainer<?> redis =
-            new GenericContainer<>("redis:latest")
+            new GenericContainer<>("redis:7.2-alpine")
                     .withExposedPorts(6379)
                     .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
 
