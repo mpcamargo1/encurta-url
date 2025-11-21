@@ -11,14 +11,16 @@ public class ValidaURLImpl implements ConstraintValidator<ValidaURL, String> {
             return false;
         }
 
+
         // ^ (início da string)
         // https?:// (protocolo http:// ou https://)
-        // (w{3}\.) (pelo menos um subdomínio, ex: www.)
-        // +[a-zA-Z]{2,} (o domínio de segundo nível, ex: google)
-        // (\.{1}[a-z]{2,}) (o domínio de nível superior: .com)
+        // (w{3}\.)*+ (subdomínio, caso houver -- eager, ex: www.)
+        // [0-9a-zA-Z\.]{2,} (match até o domínio de nível superior, ex: google, meta.stackoverflow)
+        // (\.[a-z]{2,}) (o domínio de nível superior: .com)
         // (/.*)? (opcionalmente, qualquer coisa após a barra, como /caminho)
         // $ (fim da string)
-        Pattern pattern = Pattern.compile("^(https?://)(w{3}\\.)[a-zA-Z]{2,}(\\.{1}[a-z]{2,})(/.*)?$");
+        Pattern pattern = Pattern
+                .compile("^(https?://)(w{3}\\.)*+([0-9a-zA-Z.]{2,})(\\.[a-z]{2,})(/.*)?$");
 
         return pattern.matcher(url).matches();
     }

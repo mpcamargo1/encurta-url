@@ -24,8 +24,22 @@ public class ValidaURLTest {
     }
 
     @Test
+    void deveReconhecerComoURLValida_2() {
+        String url = "https://www.youtube.com/watch?v=co6WMzDOh1o";
+        boolean isValida = validaImpl.isValid(url, contexto);
+        Assertions.assertTrue(isValida);
+    }
+
+    @Test
     void deveReconhecerComoURLComQueryParamsValida() {
         String url = "https://www.google.com/search?q=test";
+        boolean isValida = validaImpl.isValid(url, contexto);
+        Assertions.assertTrue(isValida);
+    }
+
+    @Test
+    void deveReconhecerComoURLHTTPValidaSemSubdominio() {
+        String url = "https://google.com";
         boolean isValida = validaImpl.isValid(url, contexto);
         Assertions.assertTrue(isValida);
     }
