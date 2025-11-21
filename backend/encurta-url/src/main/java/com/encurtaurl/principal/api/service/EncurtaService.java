@@ -1,15 +1,15 @@
 package com.encurtaurl.principal.api.service;
 
 import com.encurtaurl.principal.api.model.DTOs.EncurtaResponse;
+import com.encurtaurl.principal.api.model.entidade.URLEncurtada;
 import com.encurtaurl.principal.api.repository.EncurtaRepository;
 import com.encurtaurl.principal.api.utils.Base62;
 import com.encurtaurl.principal.api.utils.CriaURL;
+import com.encurtaurl.principal.api.utils.Snowflake;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.net.URI;
-import java.util.Random;
 
 @Service
 public class EncurtaService {
@@ -20,15 +20,15 @@ public class EncurtaService {
     @Autowired
     private CriaURL criaURL;
 
-    public EncurtaResponse encurtarURL(@NotBlank String urlOriginal) {
-        EncurtaResponse resposta = new EncurtaResponse();
+    @Autowired
+    private Snowflake gerador;
 
-        String hash = Base62.codificar(new Random().nextLong(0, Long.MAX_VALUE));
+    public EncurtaResponse encurtarURL(@NotBlank String urlOriginal) throws Exception {
 
-        resposta.setUrlOriginal(URI.create(urlOriginal));
-        resposta.setUrlEncurtada(criaURL.obterURLEncurtada(hash));
-
-        return resposta;
+        String hash = Base62.codificar(gerador.gerarId());
+        URI urlEncurtada = criaURL.obterURLEncurtada(hash);
+        encurtaRepository.save(new URLEncurtada(hash, urlOriginal));
+        return new EncurtaResponse(urlEncurtada, URI.create(urlOriginal));
     }
 
 }

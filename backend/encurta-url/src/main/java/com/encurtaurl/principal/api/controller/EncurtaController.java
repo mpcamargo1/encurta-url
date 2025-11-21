@@ -19,7 +19,7 @@ public class EncurtaController {
     private EncurtaService encurtaService;
 
     @PostMapping
-    public ResponseEntity<EncurtaResponse> encurtarURL(@Valid @RequestBody EncurtaRequest requisicao) {
+    public ResponseEntity<EncurtaResponse> encurtarURL(@Valid @RequestBody EncurtaRequest requisicao) throws Exception {
         EncurtaResponse resposta = encurtaService.encurtarURL(requisicao.getUrlOriginal());
 
         return ResponseEntity

@@ -22,6 +22,11 @@ public class EncurtaResponse {
     @JsonProperty("createdAt")
     private String criadoEm;
 
+    public EncurtaResponse(URI urlEncurtada, URI urlOriginal) {
+        this.urlEncurtada = urlEncurtada;
+        this.urlOriginal = urlOriginal;
+    }
+
     @JsonProperty("shortUrl")
     public URI getUrlEncurtada() {
         return urlEncurtada;
