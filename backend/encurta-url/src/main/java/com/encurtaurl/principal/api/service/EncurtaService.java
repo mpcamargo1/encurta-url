@@ -8,8 +8,11 @@ import com.encurtaurl.principal.api.utils.CriaURL;
 import com.encurtaurl.principal.api.utils.Snowflake;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.net.URI;
+import java.util.Optional;
 
 @Service
 public class EncurtaService {
@@ -29,6 +32,18 @@ public class EncurtaService {
         URI urlEncurtada = criaURL.obterURLEncurtada(hash);
         encurtaRepository.save(new URLEncurtada(hash, urlOriginal));
         return new EncurtaResponse(urlEncurtada, URI.create(urlOriginal));
+    }
+
+    public ResponseEntity<?> buscarURLOriginal(@NotBlank String hash) throws Exception {
+        Optional<String> urlOriginal = encurtaRepository.findURLOriginal(hash);
+
+        if (urlOriginal.isPresent()) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", urlOriginal.get())
+                    .build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 }
