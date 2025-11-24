@@ -4,9 +4,9 @@ name: Java CI com Maven
 
 on:
   push:
-    branches: [ "playground_mpcamargo" ]
+    branches: [ "playground_alyssonsilva" ]
   pull_request:
-    branches: [ "playground_mpcamargo" ]
+    branches: [ "playground_alyssonsilva" ]
 
 jobs:
   unit-test:
