@@ -8,11 +8,10 @@ import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
-
 import java.time.Duration;
 
 @SpringBootTest
-public class EncurtaUrlApplicationTest {
+public class EncurtaUrlApplicationIT {
 
     @Container
     public static CassandraContainer<?> cassandra =

@@ -9,7 +9,7 @@ on:
     branches: [ "playground_mpcamargo" ]
 
 jobs:
-  build:
+  unit-test:
 
     runs-on: ubuntu-latest
 
@@ -22,7 +22,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Executando testes automatizados com Maven
+    - name: Unit test
       run: mvn -B test --file pom.xml
       working-directory: backend/encurta-url/
 
@@ -32,3 +32,21 @@ jobs:
       with:
         directory: backend/encurta-url/
         token: ${{ secrets.GITHUB_TOKEN }}
+
+  integration-test:
+    needs: unit-test
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Integration test
+      run: mvn -B verify --file pom.xml
+      working-directory: backend/encurta-url/
+
