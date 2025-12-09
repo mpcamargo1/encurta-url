@@ -13,8 +13,16 @@ public class URLEncurtada {
     @Column("url_original")
     private String urlOriginal;
 
-    public URLEncurtada(String urlCurta, String urlOriginal) {
-        this.hash = urlCurta;
+    public URLEncurtada(String hash, String urlOriginal) {
+        this.hash = hash;
         this.urlOriginal = urlOriginal;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public String getUrlOriginal() {
+        return urlOriginal;
     }
 }

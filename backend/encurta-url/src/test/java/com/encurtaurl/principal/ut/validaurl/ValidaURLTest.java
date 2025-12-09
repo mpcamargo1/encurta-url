@@ -1,4 +1,4 @@
-package com.encurtaurl.principal.validaurl;
+package com.encurtaurl.principal.ut.validaurl;
 
 import com.encurtaurl.principal.api.validacao.url.ValidaURLImpl;
 import jakarta.validation.ConstraintValidatorContext;
@@ -19,7 +19,7 @@ public class ValidaURLTest {
     @Test
     void deveReconhecerComoURLValida() {
         String url = "https://www.google.com";
-        boolean isValida = validaImpl.isValid(url, contexto);
+        boolean isValida = validaImpl.isValid(url, null);
         Assertions.assertTrue(isValida);
     }
 

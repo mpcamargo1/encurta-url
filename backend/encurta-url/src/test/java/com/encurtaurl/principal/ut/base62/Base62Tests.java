@@ -1,4 +1,4 @@
-package com.encurtaurl.principal.base62;
+package com.encurtaurl.principal.ut.base62;
 
 import com.encurtaurl.principal.api.exception.ChaveInvalidaException;
 import com.encurtaurl.principal.api.exception.IDInvalidoException;
