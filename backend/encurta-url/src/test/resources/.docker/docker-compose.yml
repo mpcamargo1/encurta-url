@@ -1,0 +1,127 @@
+services:
+
+  cassandra-1:
+    image: cassandra:4.1
+    container_name: cassandra-node1
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node1
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_1:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  cassandra-2:
+    image: cassandra:4.1
+    container_name: cassandra-node2
+    ports:
+      - "9043:9042"
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node2
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node2
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_2:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+
+  cassandra-3:
+    image: cassandra:4.1
+    container_name: cassandra-node3
+    ports:
+      - "9044:9042"
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node3
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node3
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_3:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+      cassandra-2:
+        condition: service_healthy
+ 
+  cassandra-init:
+    image: cassandra:4.1
+    container_name: cassandra-init
+    volumes:
+      - ./init.cql:/init.cql
+    command: >
+      bash -c "echo 'Aguardando Cassandra...' &&
+      sleep 30 &&
+      cqlsh --request-timeout=90 cassandra-node1 -f /init.cql &&
+      echo 'Script init.cql executado com sucesso!'"
+    networks:
+      - cassandra-net
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+      cassandra-2:
+        condition: service_healthy
+      cassandra-3:
+        condition: service_healthy
+
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  
+volumes:
+  cassandra_data_1:
+  cassandra_data_2:
+  cassandra_data_3:
+
+networks:
+  cassandra-net:
+    driver: bridge
