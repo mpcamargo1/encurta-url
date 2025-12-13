@@ -24,7 +24,7 @@ public class Snowflake {
     private AtomicBoolean aluguelValido = new AtomicBoolean(false);
     private AtomicLong ultimoTimestampAluguelRenovado = new AtomicLong(0);
 
-    private int sequencia = -1;
+    private int sequencia = 0;
     private long ultimoTimestampGerado;
 
     public Snowflake(StringRedisTemplate redis) throws UnknownHostException {

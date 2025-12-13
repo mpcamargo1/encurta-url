@@ -65,6 +65,7 @@ public class SnowflakeTests {
 
     @Test
     void deveEsperarParaGerarOutroTimestamp() {
+        ReflectionTestUtils.setField(gerador, "sequencia", 4095);
         long ultimoTimestampGerado = (long) ReflectionTestUtils.invokeMethod(gerador, "obterTimestamp");
         ReflectionTestUtils.setField(gerador, "ultimoTimestampGerado", ultimoTimestampGerado);
         long timestampReferencia = (long) ReflectionTestUtils.getField(gerador, "timestampReferencia");
