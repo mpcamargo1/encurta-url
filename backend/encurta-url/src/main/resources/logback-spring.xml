@@ -1,0 +1,49 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <springProperty scope="context" name="containerName" source="encurtaurl.nomemaquina"/>
+
+    <springProfile name="!test">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>
+                    %d{HH:mm:ss.SSS} %highlight(%-5level) ${PID:-} --- [${containerName}] [%thread] %cyan(%logger{39}) : %msg%n
+                </pattern>
+            </encoder>
+        </appender>
+
+        <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+            <http>
+                <url>http://localhost:3100/loki/api/v1/push</url>
+            </http>
+            <verbose>true</verbose>
+            <format>
+                <label>
+                    <pattern>app=encurta-url,level=%level</pattern>
+                </label>
+                <message>
+                    <pattern>
+                        ${PID:-} --- [${containerName}] [%thread] %cyan(%logger{39}) : %msg%n
+                    </pattern>
+                </message>
+                <sortByTime>true</sortByTime>
+            </format>
+        </appender>
+
+        <logger name="com.encurtaurl" level="INFO" additivity="false">
+            <appender-ref ref="LOKI"/>
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="LOKI"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
