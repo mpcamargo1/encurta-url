@@ -43,10 +43,10 @@ public class Snowflake {
 
             String chaveRedis = construirChaveContainer(idContainerAReservar);
 
-            Boolean idAdquirido = redis.opsForValue().setIfAbsent(chaveRedis,
+            boolean idAdquirido = redis.opsForValue().setIfAbsent(chaveRedis,
                     String.valueOf(idContainerAReservar), tempoExpiracaoAluguel, TimeUnit.SECONDS);
 
-            if (Boolean.TRUE.equals(idAdquirido)) {
+            if (idAdquirido) {
                 aluguelValido.set(true);
                 return idContainerAReservar;
             }
@@ -55,23 +55,32 @@ public class Snowflake {
         throw new RuntimeException("Não foi possível obter o identificador do container");
     }
 
+    private boolean recuperarIDContainer() {
+        String chaveRedis = construirChaveContainer(idContainer);
+        boolean chaveRedisAdquirida = redis.opsForValue().setIfAbsent(chaveRedis, String.valueOf(idContainer),
+                tempoExpiracaoAluguel, TimeUnit.SECONDS);
+
+        return chaveRedisAdquirida;
+    }
+
     @Scheduled(fixedRate = 10000L)
     public void pulsar() {
-        if (aluguelValido.get()) {
-            renovarAluguel();
+        if (!aluguelValido.get()) {
+            aluguelValido.set(recuperarIDContainer());
+            return;
         }
+
+        renovarAluguel();
     }
 
     private void renovarAluguel() {
         try {
             String chaveContainer = construirChaveContainer(idContainer);
-            Boolean chaveRedisAtiva = redis.expire(chaveContainer, tempoExpiracaoAluguel, TimeUnit.SECONDS);
+            boolean chaveRedisAtiva = redis.expire(chaveContainer, tempoExpiracaoAluguel, TimeUnit.SECONDS);
+            aluguelValido.set(chaveRedisAtiva);
 
-            if (Boolean.TRUE.equals(chaveRedisAtiva)) {
-                aluguelValido.set(true);
+            if (chaveRedisAtiva) {
                 ultimoTimestampAluguelRenovado.set(System.currentTimeMillis());
-            } else {
-                aluguelValido.set(false);
             }
         } catch (Exception ex) {
             aluguelValido.set(false);
