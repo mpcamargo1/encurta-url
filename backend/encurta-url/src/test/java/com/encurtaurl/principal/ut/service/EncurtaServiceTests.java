@@ -1,4 +1,4 @@
-package com.encurtaurl.principal.service;
+package com.encurtaurl.principal.ut.service;
 
 import com.encurtaurl.principal.api.repository.EncurtaRepository;
 import com.encurtaurl.principal.api.service.EncurtaService;
