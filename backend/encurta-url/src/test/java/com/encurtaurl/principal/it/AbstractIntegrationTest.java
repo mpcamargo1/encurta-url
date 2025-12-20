@@ -40,7 +40,7 @@ public abstract class AbstractIntegrationTest {
                 .withInitScript(".docker/infrastructure/init.cql");
 
         redis = new GenericContainer<>("redis:7.2-alpine")
-                .withExposedPorts(6379)
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
 
         cassandra.start();
@@ -51,11 +51,13 @@ public abstract class AbstractIntegrationTest {
     static void setupProperties(DynamicPropertyRegistry registry) {
         // Cassandra
         registry.add("spring.cassandra.contact-points", cassandra::getHost);
-        registry.add("spring.cassandra.port", () -> cassandra.getMappedPort(9042));
+        registry.add("spring.cassandra.port", () -> cassandra.getMappedPort(
+                Integer.parseInt(System.getenv("CASSANDRA_PORT"))));
         registry.add("spring.cassandra.local-datacenter", cassandra::getLocalDatacenter);
 
         // Redis
         registry.add("spring.data.redis.host", redis::getHost);
-        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(
+                Integer.parseInt(System.getenv("REDIS_PORT"))));
     }
 }
