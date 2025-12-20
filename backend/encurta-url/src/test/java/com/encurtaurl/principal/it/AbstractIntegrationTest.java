@@ -37,7 +37,7 @@ public abstract class AbstractIntegrationTest {
     static {
         cassandra = new CassandraContainer<>("cassandra:4.1")
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(240)))
-                .withInitScript(".docker/init.cql");
+                .withInitScript(".docker/infrastructure/init.cql");
 
         redis = new GenericContainer<>("redis:7.2-alpine")
                 .withExposedPorts(6379)
