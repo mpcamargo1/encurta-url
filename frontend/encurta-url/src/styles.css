@@ -1,0 +1,40 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  /* Backgrounds */
+  --background: 210 20% 98%;           /* Fundo principal claro */
+  --foreground: 210 40% 10%;           /* Texto principal */
+
+  /* Cor primária (azul ciano) */
+  --primary: 195 99% 47%;              /* #01BAEF */
+  --primary-foreground: 0 0% 100%;     /* Texto sobre primária */
+
+  /* Cor secundária */
+  --secondary: 210 20% 96%;
+  --secondary-foreground: 210 40% 10%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+a {
+    text-decoration: none;
+
+}
+
+.primary-color-text{
+    color: hsl(var(--primary));
+
+}
+
+.secondary-color-text{
+    color: hsl(var(--secondary-foreground))
+
+}
