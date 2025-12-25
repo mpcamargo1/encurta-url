@@ -1,3 +1,29 @@
 svg {
-    color: white;
+  color: white;
+}
+
+span {
+  font-size: x-large;
+  font-weight: 500;
+  padding-top: 4px;
+}
+
+#logo-link {
+  display: flex;
+  gap: 6px;
+}
+
+#logo-icon-container {
+  background-color: hsl(var(--primary));
+  border-radius: 14px;
+  width: 45px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a:hover #logo-icon-container {
+  scale: 1.06;
+  transition-duration: 0.3s;
 }

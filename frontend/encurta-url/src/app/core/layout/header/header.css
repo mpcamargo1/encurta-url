@@ -1,27 +1,6 @@
 header {
     width: 100%;
     background-color: white;
-    padding: 8px 14px
+    padding: 12px 14px
 
-}
-
-span {
-    font-size: x-large;
-    font-weight: 500;
-    padding-top: 4px;
-}
-
-#logo-link{
-    display: flex;
-    gap: 6px;
-}
-
-#logo-icon-container {
-    background-color: hsl(var(--primary));
-    border-radius: 14px;
-    width: 45px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
