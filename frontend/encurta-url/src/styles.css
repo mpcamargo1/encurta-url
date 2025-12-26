@@ -1,12 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
   /* Backgrounds */
-  --background: 210 20% 98%; /* Fundo principal claro */
-  --foreground: 210 40% 10%; /* Texto principal */
+  --background: 210 20% 98%;
+  /* Fundo principal claro */
+  --foreground: 210 40% 10%;
+  /* Texto principal */
 
   /* Cor primária (azul ciano) */
-  --primary: 195 99% 47%; /* #01BAEF */
-  --primary-foreground: 0 0% 100%; /* Texto sobre primária */
+  --primary: 195 99% 47%;
+  /* #01BAEF */
+  --primary-foreground: 0 0% 100%;
+  /* Texto sobre primária */
 
   /* Cor secundária */
   --secondary: 210 20% 96%;
@@ -20,6 +24,7 @@
   padding: 0;
   margin: 0;
   font-family: 'Outfit', sans-serif;
+  box-sizing: border-box;
 }
 
 body {
@@ -33,6 +38,12 @@ a {
 
 .primary-color-text {
   color: hsl(var(--primary));
+}
+
+.primary-color-btn {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  border-style: none;
 }
 
 .secondary-color-text {
