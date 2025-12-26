@@ -1,0 +1,36 @@
+input {
+  outline: none;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foregroud));
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  border-style: none;
+}
+
+input::placeholder {
+  font-weight: 300;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+  color: hsl(var(--secondary-foregroud));
+}
+
+#input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding-left: 8px;
+  border-radius: 12px;
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foregroud));
+}
+
+#input-container:focus-within {
+  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(var(--primary));
+}

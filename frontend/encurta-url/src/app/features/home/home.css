@@ -12,11 +12,25 @@ h1 {
   font-weight: 700;
 }
 
-#input-container {
-  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 100px -20px hsl(var(--primary));
-  margin-top: 20px;
+#actions-container {
   display: flex;
-  align-content: center;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 600px;
+  height: 70px;
+  border: 6px solid white;
   border-radius: 12px;
+  margin-top: 25px;
+  box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 100px -20px hsl(var(--primary));
+}
+
+app-encurtar-link-input {
+  flex-grow: 3;
+  height: 100%;
+}
+
+#btn-container {
+  height: 100%;
+  flex-grow: 1;
 }
