@@ -1,8 +1,9 @@
 package com.encurtaurl.principal.api.utils;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.net.InetAddress;
@@ -16,18 +17,18 @@ import java.util.concurrent.atomic.AtomicLong;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // Apenas para sinalizar que é um Singleton
 public class Snowflake {
 
-    private final StringRedisTemplate redis;
+    private final RedisTemplate<String, String> redis;
     private final long timestampReferencia;
     private final int tempoExpiracaoAluguel;
     private final int idContainer;
     private final int MAXIMO_CONTAINER = 1024;
     private AtomicBoolean aluguelValido = new AtomicBoolean(false);
     private AtomicLong ultimoTimestampAluguelRenovado = new AtomicLong(0);
-
     private int sequencia = 0;
     private long ultimoTimestampGerado;
 
-    public Snowflake(StringRedisTemplate redis) throws UnknownHostException {
+    public Snowflake(@Qualifier("redisSnowflake") RedisTemplate<String, String> redis)
+            throws UnknownHostException {
         this.redis = redis;
         this.tempoExpiracaoAluguel = 30;
         // Época de 2025-01-01 00:00:00 UTC

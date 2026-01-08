@@ -1,7 +1,14 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
 
   cassandra-1:
     image: cassandra:4.1
+    logging: *default-logging
     container_name: cassandra-node1
     ports:
       - "9042:9042"
@@ -27,6 +34,7 @@ services:
 
   cassandra-2:
     image: cassandra:4.1
+    logging: *default-logging
     container_name: cassandra-node2
     ports:
       - "9043:9042"
@@ -55,6 +63,7 @@ services:
 
   cassandra-3:
     image: cassandra:4.1
+    logging: *default-logging
     container_name: cassandra-node3
     ports:
       - "9044:9042"
@@ -85,6 +94,7 @@ services:
  
   cassandra-init:
     image: cassandra:4.1
+    logging: *default-logging
     container_name: cassandra-init
     volumes:
       - ./init.cql:/init.cql
@@ -104,13 +114,30 @@ services:
         condition: service_healthy
 
 
-  redis:
+  redis-snowflake:
     image: redis:7.2-alpine
-    container_name: redis-cache
+    logging: *default-logging
+    container_name: redis-cache-snowflake
     ports:
       - "6379:6379"
     networks:
       - cassandra-net
+    command: redis-server --maxmemory 16mb
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-url:
+    image: redis:7.2-alpine
+    logging: *default-logging
+    container_name: redis-cache-url
+    ports:
+      - "6380:6379"
+    networks:
+      - cassandra-net
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
