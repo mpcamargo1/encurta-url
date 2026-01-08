@@ -4,8 +4,10 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,8 @@ public class LimitadorRequisicaoFilter implements Filter {
     private int intervalo;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    @Qualifier("redisSnowflake")
+    private RedisTemplate<String, String> redisSnowflake;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
@@ -34,10 +37,10 @@ public class LimitadorRequisicaoFilter implements Filter {
 
         String chave = retornaInternetProtocolAplicacaoCliente(requisicao);
 
-        Long contador = redisTemplate.opsForValue().increment(chave);
+        Long contador = redisSnowflake.opsForValue().increment(chave);
 
         if (contador == null || contador == 1) {
-            redisTemplate.expire(chave, intervalo, TimeUnit.SECONDS);
+            redisSnowflake.expire(chave, intervalo, TimeUnit.SECONDS);
         }
 
         if (contador >= maximoRequisicao) {

@@ -50,7 +50,6 @@ jobs:
       run: mvn -B verify --file pom.xml
       working-directory: backend/encurta-url/
       env:
-        REDIS_HOST: ${{secrets.REDIS_HOST}}
         REDIS_PORT: ${{secrets.REDIS_PORT}}
         CASSANDRA_KEYSPACE: ${{secrets.CASSANDRA_KEYSPACE}}
         CASSANDRA_CONTACT_POINTS: ${{secrets.CASSANDRA_CONTACT_POINTS}}

@@ -32,19 +32,25 @@ public abstract class AbstractIntegrationTest {
     protected EncurtaRepository repository;
 
     static final CassandraContainer<?> cassandra;
-    static final GenericContainer<?> redis;
+    static final GenericContainer<?> redisSnowflake;
+    static final GenericContainer<?> redisURL;
 
     static {
         cassandra = new CassandraContainer<>("cassandra:4.1")
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(240)))
                 .withInitScript(".docker/infrastructure/init.cql");
 
-        redis = new GenericContainer<>("redis:7.2-alpine")
+        redisSnowflake = new GenericContainer<>("redis:7.2-alpine")
                 .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
-                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(60)));
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
+
+        redisURL = new GenericContainer<>("redis:7.2-alpine")
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
         cassandra.start();
-        redis.start();
+        redisSnowflake.start();
+        redisURL.start();
     }
 
     @DynamicPropertySource
@@ -55,9 +61,14 @@ public abstract class AbstractIntegrationTest {
                 Integer.parseInt(System.getenv("CASSANDRA_PORT"))));
         registry.add("spring.cassandra.local-datacenter", cassandra::getLocalDatacenter);
 
-        // Redis
-        registry.add("spring.data.redis.host", redis::getHost);
-        registry.add("spring.data.redis.port", () -> redis.getMappedPort(
+        // Redis Snowflake
+        registry.add("redis.snowflake.host", redisSnowflake::getHost);
+        registry.add("redis.snowflake.port", () -> redisSnowflake.getMappedPort(
+                Integer.parseInt(System.getenv("REDIS_PORT"))));
+
+        // Redis URL
+        registry.add("redis.url.host", redisURL::getHost);
+        registry.add("redis.url.port", () -> redisURL.getMappedPort(
                 Integer.parseInt(System.getenv("REDIS_PORT"))));
     }
 }
