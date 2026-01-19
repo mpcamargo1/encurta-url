@@ -49,3 +49,14 @@ a {
 .secondary-color-text {
   color: hsl(var(--secondary-foreground));
 }
+
+.validation-error-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: red;
+}
+
+.validation-error-hint i {
+  font-size: xx-large;
+}

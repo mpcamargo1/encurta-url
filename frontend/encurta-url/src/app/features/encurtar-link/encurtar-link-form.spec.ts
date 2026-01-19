@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EncurtarLinkButton } from './encurtar-link-button';
+import { EncurtarLinkForm } from './encurtar-link-form';
 
-describe('EncurtarLinkButton', () => {
-  let component: EncurtarLinkButton;
-  let fixture: ComponentFixture<EncurtarLinkButton>;
+describe('EncurtarLinkForm', () => {
+  let component: EncurtarLinkForm;
+  let fixture: ComponentFixture<EncurtarLinkForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EncurtarLinkButton]
+      imports: [EncurtarLinkForm]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EncurtarLinkButton);
+    fixture = TestBed.createComponent(EncurtarLinkForm);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
