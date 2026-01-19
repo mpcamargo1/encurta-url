@@ -3,6 +3,7 @@ package com.encurtaurl.principal.api.controller;
 import com.encurtaurl.principal.api.model.DTOs.EncurtaRequest;
 import com.encurtaurl.principal.api.model.DTOs.EncurtaResponse;
 import com.encurtaurl.principal.api.service.EncurtaService;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ public class EncurtaController {
     private EncurtaService encurtaService;
 
     @PostMapping("/shorten")
+    @Observed(name = "encurtarURL")
     public ResponseEntity<EncurtaResponse> encurtarURL(@Valid @RequestBody EncurtaRequest requisicao) throws Exception {
         EncurtaResponse resposta = encurtaService.encurtarURL(requisicao.getUrlOriginal());
 
@@ -24,6 +26,7 @@ public class EncurtaController {
     }
 
     @GetMapping("/{hash}")
+    @Observed(name = "redirecionarParaURLOriginal")
     public ResponseEntity<?> redirecionarParaURLOriginal(@PathVariable String hash) throws Exception {
         return encurtaService.buscarURLOriginal(hash);
     }

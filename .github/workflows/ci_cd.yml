@@ -1,6 +1,6 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-name: Java CI com Maven
+name: CI/CD encurta-url
 
 on:
   push:
@@ -49,4 +49,39 @@ jobs:
     - name: Integration test
       run: mvn -B verify --file pom.xml
       working-directory: backend/encurta-url/
+      env:
+        REDIS_PORT: ${{secrets.REDIS_PORT}}
+        CASSANDRA_KEYSPACE: ${{secrets.CASSANDRA_KEYSPACE}}
+        CASSANDRA_CONTACT_POINTS: ${{secrets.CASSANDRA_CONTACT_POINTS}}
+        CASSANDRA_PORT: ${{secrets.CASSANDRA_PORT}}
+        CASSANDRA_DATACENTER: ${{secrets.CASSANDRA_DATACENTER}}
+        APP_PROTOCOL: https
+        APP_DOMAIN: e-url.com
+        HOSTNAME: localhost
 
+  docker-buildx:
+    needs: integration-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configura Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_PASSWORD}}
+
+      - name: Build Push
+        uses: docker/build-push-action@v5
+        with:
+          context: backend/encurta-url/
+          file: backend/encurta-url/Dockerfile
+          push: true
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/encurta-url:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/encurta-url:${{github.sha}}

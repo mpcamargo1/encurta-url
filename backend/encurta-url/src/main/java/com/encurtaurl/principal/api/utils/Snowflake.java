@@ -1,8 +1,9 @@
 package com.encurtaurl.principal.api.utils;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.net.InetAddress;
@@ -16,18 +17,18 @@ import java.util.concurrent.atomic.AtomicLong;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON) // Apenas para sinalizar que é um Singleton
 public class Snowflake {
 
-    private final StringRedisTemplate redis;
+    private final RedisTemplate<String, String> redis;
     private final long timestampReferencia;
     private final int tempoExpiracaoAluguel;
     private final int idContainer;
     private final int MAXIMO_CONTAINER = 1024;
     private AtomicBoolean aluguelValido = new AtomicBoolean(false);
     private AtomicLong ultimoTimestampAluguelRenovado = new AtomicLong(0);
-
-    private int sequencia = -1;
+    private int sequencia = 0;
     private long ultimoTimestampGerado;
 
-    public Snowflake(StringRedisTemplate redis) throws UnknownHostException {
+    public Snowflake(@Qualifier("redisSnowflake") RedisTemplate<String, String> redis)
+            throws UnknownHostException {
         this.redis = redis;
         this.tempoExpiracaoAluguel = 30;
         // Época de 2025-01-01 00:00:00 UTC
@@ -43,10 +44,10 @@ public class Snowflake {
 
             String chaveRedis = construirChaveContainer(idContainerAReservar);
 
-            Boolean idAdquirido = redis.opsForValue().setIfAbsent(chaveRedis,
+            boolean idAdquirido = redis.opsForValue().setIfAbsent(chaveRedis,
                     String.valueOf(idContainerAReservar), tempoExpiracaoAluguel, TimeUnit.SECONDS);
 
-            if (Boolean.TRUE.equals(idAdquirido)) {
+            if (idAdquirido) {
                 aluguelValido.set(true);
                 return idContainerAReservar;
             }
@@ -55,23 +56,32 @@ public class Snowflake {
         throw new RuntimeException("Não foi possível obter o identificador do container");
     }
 
+    private boolean recuperarIDContainer() {
+        String chaveRedis = construirChaveContainer(idContainer);
+        boolean chaveRedisAdquirida = redis.opsForValue().setIfAbsent(chaveRedis, String.valueOf(idContainer),
+                tempoExpiracaoAluguel, TimeUnit.SECONDS);
+
+        return chaveRedisAdquirida;
+    }
+
     @Scheduled(fixedRate = 10000L)
     public void pulsar() {
-        if (aluguelValido.get()) {
-            renovarAluguel();
+        if (!aluguelValido.get()) {
+            aluguelValido.set(recuperarIDContainer());
+            return;
         }
+
+        renovarAluguel();
     }
 
     private void renovarAluguel() {
         try {
             String chaveContainer = construirChaveContainer(idContainer);
-            Boolean chaveRedisAtiva = redis.expire(chaveContainer, tempoExpiracaoAluguel, TimeUnit.SECONDS);
+            boolean chaveRedisAtiva = redis.expire(chaveContainer, tempoExpiracaoAluguel, TimeUnit.SECONDS);
+            aluguelValido.set(chaveRedisAtiva);
 
-            if (Boolean.TRUE.equals(chaveRedisAtiva)) {
-                aluguelValido.set(true);
+            if (chaveRedisAtiva) {
                 ultimoTimestampAluguelRenovado.set(System.currentTimeMillis());
-            } else {
-                aluguelValido.set(false);
             }
         } catch (Exception ex) {
             aluguelValido.set(false);

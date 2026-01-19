@@ -1,0 +1,38 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2025-12-15
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+compactor:
+  working_directory: /loki/boltdb-shipper-compactor
+  shared_store: filesystem
+  retention_enabled: true
+
+limits_config:
+  retention_period: 72h
+
+ingester:
+  chunk_target_size: 524288
+  chunk_idle_period: 5m
+  max_chunk_age: 30m

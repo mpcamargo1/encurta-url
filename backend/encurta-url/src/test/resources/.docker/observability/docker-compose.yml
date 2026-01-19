@@ -1,0 +1,36 @@
+services:
+  # 1. LOKI (Armazena os Logs)
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+    command:
+      -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+
+  # 2. PROMETHEUS (Coleta as Métricas)
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=48h'
+      - '--storage.tsdb.retention.size=512MB'
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # 3. GRAFANA (Visualiza tudo)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - "GF_SECURITY_ADMIN_USER=${GRAFANA_USER_ADMIN:?ERRO: Usuário não definido}"
+      - "GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD_ADMIN?ERRO: Senha não definida}"
+    depends_on:
+      - loki
+      - prometheus

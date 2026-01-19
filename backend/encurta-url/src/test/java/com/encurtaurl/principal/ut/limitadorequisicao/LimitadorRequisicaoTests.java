@@ -1,4 +1,4 @@
-package com.encurtaurl.principal.limitadorequisicao;
+package com.encurtaurl.principal.ut.limitadorequisicao;
 
 import com.encurtaurl.principal.api.config.LimitadorRequisicaoFilter;
 import jakarta.servlet.FilterChain;
