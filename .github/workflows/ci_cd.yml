@@ -4,9 +4,9 @@ name: CI/CD encurta-url
 
 on:
   push:
-    branches: [ "playground_mpcamargo" ]
+    branches: [ "release" ]
   pull_request:
-    branches: [ "playground_mpcamargo" ]
+    branches: [ "release" ]
 
 jobs:
   unit-test:
