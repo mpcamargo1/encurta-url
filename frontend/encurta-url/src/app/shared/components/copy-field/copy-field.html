@@ -1,0 +1,13 @@
+<div class="copy-container">
+  <div class="input-group">
+    <input type="text" [value]="textToCopy()" readonly />
+    <button (click)="copy()" class="copy-btn">
+      <i class="fa-regular fa-copy"></i>
+      Copiar
+    </button>
+  </div>
+  
+  @if (isCopied()) {
+    <span class="copy-badge">Copiado!</span>
+  }
+</div>

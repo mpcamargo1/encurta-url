@@ -44,6 +44,15 @@ a {
   color: hsl(var(--primary-foreground));
   background-color: hsl(var(--primary));
   border-style: none;
+  font-size: large;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+}
+
+.primary-color-btn:hover {
+  opacity: 0.9;
 }
 
 .secondary-color-text {

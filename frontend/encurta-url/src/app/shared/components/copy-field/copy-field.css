@@ -1,0 +1,79 @@
+.copy-container {
+    margin-top: 15px;
+    position: relative;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.input-group input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    font-family: monospace;
+    color: hsl(var(--primary));
+}
+
+.copy-btn {
+    background: hsl(var(--primary));
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.copy-btn:hover {
+    opacity: 0.9;
+}
+
+.copy-badge {
+    position: absolute;
+    right: 20px;
+    top: 85px;
+    background: hsl(var(--primary));
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@media (min-width: 375px) {
+    .input-group {
+        flex-direction: row;
+    }
+
+    .copy-badge {
+        top: 50px;
+    }
+}
