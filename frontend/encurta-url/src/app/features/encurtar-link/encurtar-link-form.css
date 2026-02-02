@@ -1,0 +1,137 @@
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 90vw;
+    height: 12vh;
+    border: 6px solid white;
+    border-radius: 12px;
+    margin-top: 25px;
+    box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 100px -20px hsl(var(--primary));
+    position: relative;
+}
+
+#input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    padding-left: 8px;
+    border-radius: 12px;
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foregroud));
+}
+
+#input-container:focus-within {
+    box-shadow: 0 0 0 2px hsl(0 0% 100%), 0 0 0 4px hsl(var(--primary));
+}
+
+input {
+    outline: none;
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foregroud));
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    border-style: none;
+}
+
+input::placeholder {
+    font-weight: 300;
+}
+
+svg {
+    width: 20px;
+    height: 20px;
+    color: hsl(var(--secondary-foregroud));
+}
+
+#btn-container {
+    width: 100%;
+    height: 100%;
+}
+
+#encurtar-btn {
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+#encurtar-btn:hover i {
+    transform: translateX(3px);
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    animation: rotation 1s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+i {
+    font-size: small;
+    transition: transform 0.2s ease;
+}
+
+.validation-error-hint {
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+@media (min-width: 768px) {
+    form {
+        width: 70vw;
+        height: 70px;
+        flex-direction: row;
+    }
+
+    #input-container {
+        width: auto;
+        flex-grow: 3;
+    }
+
+    #btn-container {
+        width: auto;
+        flex-grow: 1;
+    }
+}
+
+@media (min-width: 1024px) {
+    form {
+        width: 60vw;
+    }
+}
+
+@media (min-width: 1400px) {
+    form {
+        width: 35vw;
+    }
+}

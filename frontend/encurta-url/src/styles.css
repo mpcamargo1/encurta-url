@@ -1,0 +1,71 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  /* Backgrounds */
+  --background: 210 20% 98%;
+  /* Fundo principal claro */
+  --foreground: 210 40% 10%;
+  /* Texto principal */
+
+  /* Cor primária (azul ciano) */
+  --primary: 195 99% 47%;
+  /* #01BAEF */
+  --primary-foreground: 0 0% 100%;
+  /* Texto sobre primária */
+
+  /* Cor secundária */
+  --secondary: 210 20% 96%;
+  --secondary-foreground: 210 40% 10%;
+
+  --muted: 210 20% 94%;
+  --muted-foreground: 210 15% 45%;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+a {
+  text-decoration: none;
+}
+
+.primary-color-text {
+  color: hsl(var(--primary));
+}
+
+.primary-color-btn {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  border-style: none;
+  font-size: large;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+}
+
+.primary-color-btn:hover {
+  opacity: 0.9;
+}
+
+.secondary-color-text {
+  color: hsl(var(--secondary-foreground));
+}
+
+.validation-error-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: red;
+}
+
+.validation-error-hint i {
+  font-size: xx-large;
+}

@@ -1,0 +1,15 @@
+@if (messagesService.message(); as msg) {
+  <div id="message-box-container" [attr.data-message-name]="msg.name" [attr.data-message-type]="msg.type">
+    <div id="message-box-header">
+      <h2>{{ msg.header }}</h2>
+      <button class= "primary-color-btn"(click)="messagesService.clearMessage()">×</button>
+    </div>
+
+    @if (msg.name === 'linkEncurtado') {
+      <app-copy-field [textToCopy]="msg.body" />
+    } 
+    @else {
+      <p>{{ msg.body }}</p>
+    }
+  </div>
+}
