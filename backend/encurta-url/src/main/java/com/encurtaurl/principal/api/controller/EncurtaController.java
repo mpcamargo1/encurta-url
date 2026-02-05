@@ -5,6 +5,7 @@ import com.encurtaurl.principal.api.model.DTOs.EncurtaResponse;
 import com.encurtaurl.principal.api.service.EncurtaService;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,8 @@ public class EncurtaController {
 
     @GetMapping("/{hash}")
     @Observed(name = "redirecionarParaURLOriginal")
-    public ResponseEntity<?> redirecionarParaURLOriginal(@PathVariable String hash) throws Exception {
+    public ResponseEntity<?> redirecionarParaURLOriginal(@PathVariable @Pattern(regexp = "^[a-zA-Z0-9]+$") String hash)
+            throws Exception {
         return encurtaService.buscarURLOriginal(hash);
     }
 }
