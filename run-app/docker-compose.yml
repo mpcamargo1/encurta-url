@@ -1,0 +1,177 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+
+  cassandra-1:
+    image: cassandra:4.1
+    logging: *default-logging
+    container_name: cassandra-node1
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node1
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_1:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  cassandra-2:
+    image: cassandra:4.1
+    logging: *default-logging
+    container_name: cassandra-node2
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node2
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node2
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_2:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+
+  cassandra-3:
+    image: cassandra:4.1
+    logging: *default-logging
+    container_name: cassandra-node3
+    environment:
+      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_LISTEN_ADDRESS=cassandra-node3
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-node3
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=512M
+    volumes:
+      - cassandra_data_3:/var/lib/cassandra
+    networks:
+      - cassandra-net
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+      cassandra-2:
+        condition: service_healthy
+
+  cassandra-init:
+    image: cassandra:4.1
+    logging: *default-logging
+    container_name: cassandra-init
+    volumes:
+      - ./init.cql:/init.cql
+    command: >
+      bash -c "echo 'Aguardando Cassandra...' &&
+      sleep 30 &&
+      cqlsh --request-timeout=90 cassandra-node1 -f /init.cql &&
+      echo 'Script init.cql executado com sucesso!'"
+    networks:
+      - cassandra-net
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+      cassandra-2:
+        condition: service_healthy
+      cassandra-3:
+        condition: service_healthy
+
+  redis-snowflake:
+    image: redis:7.2-alpine
+    logging: *default-logging
+    container_name: redis-cache-snowflake
+    networks:
+      - cassandra-net
+    command: redis-server --maxmemory 16mb
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-url:
+    image: redis:7.2-alpine
+    logging: *default-logging
+    container_name: redis-cache-url
+    networks:
+      - cassandra-net
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      
+  encurta-url:
+    container_name: encurta-url
+    build:
+      context: ../backend/encurta-url
+      dockerfile: Dockerfile
+    env_file:
+      - ./encurta-url.env
+    networks:
+      - cassandra-net
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+      cassandra-2:
+        condition: service_healthy
+      cassandra-3:
+        condition: service_healthy
+      redis-snowflake:
+        condition: service_healthy
+      redis-url:
+        condition: service_healthy
+
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - encurta-url
+    networks:
+      - cassandra-net
+
+volumes:
+  cassandra_data_1:
+  cassandra_data_2:
+  cassandra_data_3:
+
+networks:
+  cassandra-net:
+    driver: bridge
