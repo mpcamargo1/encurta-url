@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /         
+Disallow: /404
+Disallow: /error
+
+# Sitemaps
+Sitemap: https://encurtaurl.net/sitemap.xml
