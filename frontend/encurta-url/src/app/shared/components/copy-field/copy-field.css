@@ -20,6 +20,7 @@
     padding: 8px;
     font-family: monospace;
     color: hsl(var(--primary));
+    font-size: small;
 }
 
 .copy-btn {
@@ -68,7 +69,7 @@
     }
 }
 
-@media (min-width: 375px) {
+@media (min-width: 768px) {
     .input-group {
         flex-direction: row;
     }

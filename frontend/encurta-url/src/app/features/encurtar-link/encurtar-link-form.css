@@ -63,6 +63,7 @@ svg {
     justify-content: center;
     align-items: center;
     gap: 15px;
+    min-width: 120px
 }
 
 #encurtar-btn:hover i {
