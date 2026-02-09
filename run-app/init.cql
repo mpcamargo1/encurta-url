@@ -1,4 +1,4 @@
-CREATE KEYSPACE e_url_keyspace
+CREATE KEYSPACE IF NOT EXISTS e_url_keyspace
 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
 
 USE e_url_keyspace;
