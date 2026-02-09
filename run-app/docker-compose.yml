@@ -94,7 +94,7 @@ services:
       - ./init.cql:/init.cql
     command: >
       bash -c "echo 'Aguardando Cassandra...' &&
-      sleep 30 &&
+      sleep 05 &&
       cqlsh --request-timeout=90 cassandra-node1 -f /init.cql &&
       echo 'Script init.cql executado com sucesso!'"
     networks:
@@ -143,12 +143,8 @@ services:
     networks:
       - cassandra-net
     depends_on:
-      cassandra-1:
-        condition: service_healthy
-      cassandra-2:
-        condition: service_healthy
-      cassandra-3:
-        condition: service_healthy
+      cassandra-init:
+        condition: service_completed_successfully
       redis-snowflake:
         condition: service_healthy
       redis-url:
