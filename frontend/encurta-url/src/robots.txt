@@ -1,5 +1,8 @@
 User-agent: *
-Allow: /         
+Allow: /$
+Allow: /favicon.ico
+Allow: /*.js
+Allow: /*.css
 Disallow: /404
 Disallow: /error
 
