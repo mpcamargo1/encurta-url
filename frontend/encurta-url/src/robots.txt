@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /$
+Allow: /favicon.ico
+Allow: /*.js
+Allow: /*.css
+Disallow: /404
+Disallow: /error
+
+# Sitemaps
+Sitemap: https://encurtaurl.net/sitemap.xml
