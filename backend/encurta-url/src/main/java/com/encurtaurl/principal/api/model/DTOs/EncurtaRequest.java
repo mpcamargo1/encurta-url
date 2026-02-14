@@ -25,6 +25,10 @@ public class EncurtaRequest {
 
     @JsonProperty("longUrl")
     public void setUrlOriginal(String urlOriginal) {
+        if (urlOriginal != null) {
+            urlOriginal = urlOriginal.trim();
+        }
+
         this.urlOriginal = urlOriginal;
     }
 
