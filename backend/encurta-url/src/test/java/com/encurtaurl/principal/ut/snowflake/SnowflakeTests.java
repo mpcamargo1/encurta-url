@@ -30,6 +30,8 @@ public class SnowflakeTests {
 
     private Snowflake gerador;
 
+    private final int SHIFT_LEFT_TIMESTAMP = 21;
+
     @BeforeEach
     void configurar() throws Exception {
         // 1. O aluguel do container sempre estará ativo
@@ -50,6 +52,20 @@ public class SnowflakeTests {
     }
 
     @Test
+    void deveGerarIdentificadorComSucessoEOTimestampDeveAvancar() {
+        long timestampAnterior = 0;
+        long timestampAtual = 0;
+
+        try {timestampAnterior = gerador.gerarId() >> SHIFT_LEFT_TIMESTAMP;} catch (Exception ex) {}
+        try {Thread.sleep(1);} catch (Exception ex) {throw new RuntimeException("A thread não conseguiu dormir");}
+        try {timestampAtual = gerador.gerarId() >> SHIFT_LEFT_TIMESTAMP;} catch (Exception ex) {}
+
+        org.junit.jupiter.api.Assertions.assertNotEquals(0 , timestampAnterior);
+        org.junit.jupiter.api.Assertions.assertNotEquals(0 , timestampAtual);
+        org.junit.jupiter.api.Assertions.assertTrue(timestampAtual > timestampAnterior);
+    }
+
+    @Test
     void deveGerarExcecaoPoisGeradorEstaAtrasado() {
         long timestampAdiantadoUmaHora = (long) ReflectionTestUtils.invokeMethod(gerador, "obterTimestamp")
                 + 360_000;
@@ -65,7 +81,7 @@ public class SnowflakeTests {
 
     @Test
     void deveEsperarParaGerarOutroTimestamp() {
-        ReflectionTestUtils.setField(gerador, "sequencia", 4095);
+        ReflectionTestUtils.setField(gerador, "sequencia", 2047);
         long ultimoTimestampGerado = (long) ReflectionTestUtils.invokeMethod(gerador, "obterTimestamp");
         ReflectionTestUtils.setField(gerador, "ultimoTimestampGerado", ultimoTimestampGerado);
         long timestampReferencia = (long) ReflectionTestUtils.getField(gerador, "timestampReferencia");
@@ -78,7 +94,7 @@ public class SnowflakeTests {
             long id = 0;
             try {id = gerador.gerarId();} catch (Exception ex) {}
 
-            long timestampNovo = id >> 22;
+            long timestampNovo = id >> SHIFT_LEFT_TIMESTAMP;
             org.junit.jupiter.api.Assertions.assertNotEquals(0, timestampNovo);
             org.junit.jupiter.api.Assertions.assertNotEquals(ultimoTimestampGerado, timestampNovo);
         }

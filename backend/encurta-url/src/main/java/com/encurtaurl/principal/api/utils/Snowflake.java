@@ -22,17 +22,19 @@ public class Snowflake {
     private final int tempoExpiracaoAluguel;
     private final int idContainer;
     private final int MAXIMO_CONTAINER = 1024;
-    private AtomicBoolean aluguelValido = new AtomicBoolean(false);
-    private AtomicLong ultimoTimestampAluguelRenovado = new AtomicLong(0);
+    private final int MAXIMO_SEQUENCIA = 2047; // (1L << 11 ) - 1 => 011111111111 => 2047
     private int sequencia = 0;
     private long ultimoTimestampGerado;
+
+    private AtomicBoolean aluguelValido = new AtomicBoolean(false);
+    private AtomicLong ultimoTimestampAluguelRenovado = new AtomicLong(0);
 
     public Snowflake(@Qualifier("redisSnowflake") RedisTemplate<String, String> redis)
             throws UnknownHostException {
         this.redis = redis;
         this.tempoExpiracaoAluguel = 30;
-        // Época de 2025-01-01 00:00:00 UTC
-        this.timestampReferencia = 1735689600000L;
+        // Época de 2026-01-01 00:00:00 UTC
+        this.timestampReferencia = 1767225600000L;
         this.idContainer = criarIDContainer();
     }
 
@@ -44,8 +46,8 @@ public class Snowflake {
 
             String chaveRedis = construirChaveContainer(idContainerAReservar);
 
-            boolean idAdquirido = redis.opsForValue().setIfAbsent(chaveRedis,
-                    String.valueOf(idContainerAReservar), tempoExpiracaoAluguel, TimeUnit.SECONDS);
+            boolean idAdquirido = redis.opsForValue().setIfAbsent(
+                    chaveRedis, String.valueOf(idContainerAReservar), tempoExpiracaoAluguel, TimeUnit.SECONDS);
 
             if (idAdquirido) {
                 aluguelValido.set(true);
@@ -58,8 +60,8 @@ public class Snowflake {
 
     private boolean recuperarIDContainer() {
         String chaveRedis = construirChaveContainer(idContainer);
-        boolean chaveRedisAdquirida = redis.opsForValue().setIfAbsent(chaveRedis, String.valueOf(idContainer),
-                tempoExpiracaoAluguel, TimeUnit.SECONDS);
+        boolean chaveRedisAdquirida = redis.opsForValue().setIfAbsent(
+                chaveRedis, String.valueOf(idContainer), tempoExpiracaoAluguel, TimeUnit.SECONDS);
 
         return chaveRedisAdquirida;
     }
@@ -97,8 +99,6 @@ public class Snowflake {
     public synchronized long gerarId() throws Exception {
         long timestampAtual = obterTimestamp();
 
-        final int maximoSequencia = 4095;  // (1L << 12 ) - 1 => 0111111111111 => 4095
-
         if (!aluguelValido.get()) {
             throw new Exception("Aluguel não ativo. Falha ao gerar o ID");
         }
@@ -116,7 +116,7 @@ public class Snowflake {
         }
 
         if (timestampAtual == ultimoTimestampGerado) {
-            sequencia = (sequencia + 1) & maximoSequencia;
+            sequencia = (sequencia + 1) & MAXIMO_SEQUENCIA;
 
             if (sequencia == 0) {
                 timestampAtual = esperarProximoTimestamp(timestampAtual);
@@ -128,13 +128,13 @@ public class Snowflake {
         /**
          * Layout do ID Snowflake (64 bits):
          * Estrutura: | BIT DE SINAL | TIMESTAMP | NODE ID | SEQUENCE |
-         * Posição:   |      63      | 62 - 22   | 21 - 12 | 11 - 0   |
-         * Bits:      |      1       |   41 bits | 10 bits | 12 bits  |
+         * Posição:   |      63      | 62 - 21   | 20 - 11 | 10 - 0   |
+         * Bits:      |      1       |   42 bits | 10 bits | 11 bits  |
          * -----------------------------------------------------------
          * TOTAL:    |                          64 bits               |
          */
-        long idGerado = timestampAtual << 22
-                | ((long) idContainer << 12)
+        long idGerado = timestampAtual << 21
+                | ((long) idContainer << 11)
                 | sequencia;
 
         return idGerado;
