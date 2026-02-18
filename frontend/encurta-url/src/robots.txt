@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /$
-Allow: /favicon.ico
+Allow: /favicon.svg
 Allow: /*.js
 Allow: /*.css
 Disallow: /404
