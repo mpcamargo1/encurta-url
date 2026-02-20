@@ -62,6 +62,7 @@ jobs:
   docker-buildx:
     needs: integration-test
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout do código
