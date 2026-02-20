@@ -1,0 +1,29 @@
+div {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+i {
+  font-size: 60px;
+  color: hsl(var(--primary));
+}
+
+h1 {
+  font-size: large;
+  font-weight: 800;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: xx-large;
+  }
+
+  i {
+    font-size: 90px;
+  }
+}
