@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EncurtarLinkRequest } from './EncurtarLinkRequest';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { EncurtarLinkResponse } from './EncurtarLinkResponse';
 import { Observable } from 'rxjs';
