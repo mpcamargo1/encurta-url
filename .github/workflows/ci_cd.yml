@@ -4,9 +4,12 @@ name: CI/CD encurta-url
 
 on:
   push:
-    branches: [ "release" ]
+    branches: &trigger_branches [ "release" ]
+    paths: &trigger_paths
+      - 'backend/encurta-url/**'
   pull_request:
-    branches: [ "release" ]
+    branches: *trigger_branches
+    paths: *trigger_paths
 
 jobs:
   unit-test:
