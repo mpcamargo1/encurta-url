@@ -34,6 +34,7 @@ public abstract class AbstractIntegrationTest {
     static final CassandraContainer<?> cassandra;
     static final GenericContainer<?> redisSnowflake;
     static final GenericContainer<?> redisURL;
+    static final GenericContainer<?> redisRequest;
 
     static {
         cassandra = new CassandraContainer<>("cassandra:4.1")
@@ -48,9 +49,14 @@ public abstract class AbstractIntegrationTest {
                 .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
+        redisRequest = new GenericContainer<>("redis:7.2-alpine")
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
+                .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
+
         cassandra.start();
         redisSnowflake.start();
         redisURL.start();
+        redisRequest.start();
     }
 
     @DynamicPropertySource
@@ -69,6 +75,11 @@ public abstract class AbstractIntegrationTest {
         // Redis URL
         registry.add("redis.url.host", redisURL::getHost);
         registry.add("redis.url.port", () -> redisURL.getMappedPort(
+                Integer.parseInt(System.getenv("REDIS_PORT"))));
+
+        // Redis Request
+        registry.add("redis.request.host", redisRequest::getHost);
+        registry.add("redis.request.port", () -> redisRequest.getMappedPort(
                 Integer.parseInt(System.getenv("REDIS_PORT"))));
     }
 }

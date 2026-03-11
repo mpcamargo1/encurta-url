@@ -16,21 +16,28 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    // 1. Definição das Propriedades do Snowflake
+    // Definição das Propriedades do Snowflake
     @Bean
     @ConfigurationProperties(prefix = "redis.snowflake")
     public RedisInstanceConfig createRedisSnowflakeInstanceConfig() {
         return new RedisInstanceConfig();
     }
 
-    // 2. Definição das Propriedades da URL
+    // Definição das Propriedades da URL
     @Bean
     @ConfigurationProperties(prefix = "redis.url")
     public RedisInstanceConfig createRedisURLInstanceConfig() {
         return new RedisInstanceConfig();
     }
 
-    // 3. Função auxiliar para montar a Factory
+    // Definição das Propriedades da Request
+    @Bean
+    @ConfigurationProperties(prefix = "redis.request")
+    public RedisInstanceConfig createRedisRequestInstanceConfig() {
+        return new RedisInstanceConfig();
+    }
+
+    // Função auxiliar para montar a Factory
     private LettuceConnectionFactory buildConnectionFactory(RedisInstanceConfig config) {
         SocketOptions socketOptions = SocketOptions.builder()
                 .connectTimeout(Duration.ofMillis(config.getConnectTimeout()))
@@ -48,17 +55,24 @@ public class RedisConfig {
         return factory;
     }
 
-    // 4. Criar Instância Redis para o Snowflake
+    // Criar Instância Redis para o Snowflake
     @Bean(name = "redisSnowflake")
     public RedisTemplate<String, String> snowflakeTemplate(
             @Qualifier("createRedisSnowflakeInstanceConfig") RedisInstanceConfig config) {
         return createTemplate(buildConnectionFactory(config));
     }
 
-    // 5. Cria Instãncia Redis para as URLs
+    // Cria Instãncia Redis para as URLs
     @Bean(name = "redisURL")
     public RedisTemplate<String, String> urlTemplate(
             @Qualifier("createRedisURLInstanceConfig") RedisInstanceConfig config) {
+        return createTemplate(buildConnectionFactory(config));
+    }
+
+    // Cria Instância Redis para as Requests
+    @Bean(name = "redisRequest")
+    public RedisTemplate<String, String> requestTemplate(
+            @Qualifier("createRedisRequestInstanceConfig") RedisInstanceConfig config) {
         return createTemplate(buildConnectionFactory(config));
     }
 

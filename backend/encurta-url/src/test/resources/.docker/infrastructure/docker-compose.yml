@@ -143,6 +143,21 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+
+  redis-request:
+    image: redis:7.2-alpine
+    logging: *default-logging
+    container_name: redis-cache-request
+    ports:
+      - "6381:6379"
+    networks:
+      - cassandra-net
+    command: redis-server --maxmemory 32mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   
 volumes:
   cassandra_data_1:
