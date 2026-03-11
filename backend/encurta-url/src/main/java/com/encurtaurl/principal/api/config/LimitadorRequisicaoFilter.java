@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,8 +24,8 @@ public class LimitadorRequisicaoFilter implements Filter {
     private int intervalo;
 
     @Autowired
-    @Qualifier("redisSnowflake")
-    private RedisTemplate<String, String> redisSnowflake;
+    @Qualifier("redisRequest")
+    private RedisTemplate<String, String> redisRequest;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
@@ -37,13 +36,13 @@ public class LimitadorRequisicaoFilter implements Filter {
 
         String chave = retornaInternetProtocolAplicacaoCliente(requisicao);
 
-        Long contador = redisSnowflake.opsForValue().increment(chave);
+        Long contador = redisRequest.opsForValue().increment(chave);
 
-        if (contador == null || contador == 1) {
-            redisSnowflake.expire(chave, intervalo, TimeUnit.SECONDS);
+        if (contador == null || (contador == 1 || contador >= maximoRequisicao)) {
+            redisRequest.expire(chave, intervalo, TimeUnit.SECONDS);
         }
 
-        if (contador >= maximoRequisicao) {
+        if (contador != null && contador >= maximoRequisicao) {
             resposta.setStatus(429); // Status Code: Too many request;
             return;
         }
