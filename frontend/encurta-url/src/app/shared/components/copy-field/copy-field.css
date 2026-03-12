@@ -23,6 +23,16 @@
     font-size: small;
 }
 
+.input-style-link {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    font-family: monospace;
+    color: hsl(var(--primary));
+    font-size: small;
+}
+
 .copy-btn {
     background: hsl(var(--primary));
     color: white;

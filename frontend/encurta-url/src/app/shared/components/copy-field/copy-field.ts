@@ -9,6 +9,7 @@ import { Component, input, signal } from '@angular/core';
 export class CopyField {
   textToCopy = input.required<string>();
   isCopied = signal(false);
+  isLink = input<boolean>(false);
 
   copy() {
     navigator.clipboard.writeText(this.textToCopy()).then(() => {
