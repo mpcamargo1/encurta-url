@@ -6,7 +6,7 @@
     </div>
 
     @if (msg.name === 'linkEncurtado') {
-      <app-copy-field [textToCopy]="msg.body" />
+      <app-copy-field [textToCopy]="msg.body" [isLink]="true" />
     } 
     @else {
       <p>{{ msg.body }}</p>
