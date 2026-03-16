@@ -24,6 +24,8 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
 
   waitingResponse = signal(false);
 
+  isSubmitted = signal(false);
+
   private responseSubscription!: Subscription;
 
   constructor(private encurtaService: EncurtarLinkService, private messagesService: MessagesService) { }
@@ -41,6 +43,8 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
   }
 
   submit() {
+    this.isSubmitted.set(true);
+
     if (this.encurtaForm.invalid) {
       return;
     }
