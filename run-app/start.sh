@@ -2,6 +2,11 @@ cd ../frontend/encurta-url
 
 ng build --configuration development
 
+if [ $? -ne 0 ]; then
+    echo "✘ Ops, o build falhou. Abortando..."
+    exit 1
+fi
+
 rm -rfv ../../run-app/frontend
 
 mkdir ../../run-app/frontend
