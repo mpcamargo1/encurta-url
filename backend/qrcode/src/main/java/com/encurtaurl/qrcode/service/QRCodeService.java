@@ -1,5 +1,6 @@
 package com.encurtaurl.qrcode.service;
 
+import com.encurtaurl.qrcode.utils.QRCodeUtils;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Service;
 
