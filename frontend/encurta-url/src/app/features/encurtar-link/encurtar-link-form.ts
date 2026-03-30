@@ -32,7 +32,12 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.encurtaForm = new FormGroup({
-      longUrl: new FormControl('', [Validators.required, Validators.maxLength(2048)])
+      longUrl: new FormControl('',
+        [
+          Validators.required,
+          Validators.maxLength(2048),
+          Validators.pattern(/^https?:\/\/([\w\d\-_]+\.)+[a-z]{2,}(?:\/.*)?$/i)
+        ])
     });
   }
 
@@ -79,6 +84,15 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
           this.messagesService.addMessage(MESSAGES.API_ERROR(errorMessage));
         }
       });
+  }
+
+  formatUrl() {
+    const control = this.encurtaForm.get('longUrl');
+    let url = control?.value?.trim();
+
+    if (url && !/^(http:\/\/|https:\/\/)/i.test(url)) {
+      control?.setValue(`https://${url}`);
+    }
   }
 
   get longUrl() {
