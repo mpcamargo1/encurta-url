@@ -57,6 +57,27 @@ public class CodeWords {
         this.padding = padding;
     }
 
+    public int[] getDadosCodeWords() {
+        String dadosBinario = new StringBuilder()
+                .append(getModo())
+                .append(getTamanho())
+                .append(getDados())
+                .append(getTerminator())
+                .append(getAlinhamentoBit())
+                .append(getPadding())
+                .toString();
+
+        int[] dados = new int[dadosBinario.length() / 8];
+
+        int indice = 0;
+        for (int i = 0; i < dadosBinario.length(); i += 8) {
+            String valorByte = dadosBinario.substring(i, i + 8);
+            dados[indice++] = Integer.parseInt(valorByte, 2);
+        }
+
+        return dados;
+    }
+
     public boolean isAlinhamentoBitNecessario() {
         int total = modo.length() + tamanho.length() + dados.length() + terminator.length() + alinhamentoBit.length();
 
