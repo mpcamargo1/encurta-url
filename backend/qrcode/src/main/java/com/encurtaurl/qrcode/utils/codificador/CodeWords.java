@@ -8,6 +8,7 @@ public class CodeWords {
     private String terminator;
     private String alinhamentoBit;
     private String padding;
+    private int[] dadosQRCode;
 
     public String getModo() {
         return modo;
@@ -57,6 +58,14 @@ public class CodeWords {
         this.padding = padding;
     }
 
+    public int[] getDadosQRCode() {
+        return dadosQRCode;
+    }
+
+    public void setDadosQRCode(int[] dadosQRCode) {
+        this.dadosQRCode = dadosQRCode;
+    }
+
     public int[] getDadosCodeWords() {
         String dadosBinario = new StringBuilder()
                 .append(getModo())
@@ -76,6 +85,21 @@ public class CodeWords {
         }
 
         return dados;
+    }
+
+    public boolean[] toBooleanArray() {
+        int[] dados = getDadosQRCode();
+
+        boolean[] dadosBooleano = new boolean[dados.length * 8];
+
+        int indice = 0;
+        for (int dado : dados) {
+            for (int quantidadeShift = 7; quantidadeShift >= 0; quantidadeShift --) {
+                dadosBooleano[indice++] = ((dado >> quantidadeShift) & 1) == 1;
+            }
+        }
+
+        return dadosBooleano;
     }
 
     public boolean isAlinhamentoBitNecessario() {
