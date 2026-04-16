@@ -35,7 +35,8 @@ public class ReedSolomonUtils {
             blocosDeErro.add(gerarBytesErroPorBloco(versao, bloco));
         }
 
-        return IntercaladorUtils.intercalarBlocos(blocosDeDados, blocosDeErro);
+        contexto.getCodeWords().setDadosQRCode(IntercaladorUtils.intercalarBlocos(blocosDeDados, blocosDeErro));
+        return contexto.getCodeWords().getDadosQRCode();
     }
 
     private static int[] gerarBytesErroPorBloco(int versao, int[] blocoDados)
