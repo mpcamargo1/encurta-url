@@ -94,7 +94,7 @@ public class CodificadorImpl {
 
         for (int i = 1; i <= mapaContextoPorVersao.size(); i++) {
             Contexto ctx = mapaContextoPorVersao.get(i);
-            int capacidade = ctx.getParametros().getTamanhoCodeWordsDados();
+            int capacidade = ctx.getParametros().getTamanhoMaximoCaracteres();
 
             if (quantidadeCaracteres <= capacidade) {
                 ctx.setUrl(url);
