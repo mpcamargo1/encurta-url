@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 public class QRCodeService {
 
     public byte[] criarQRCode(@NotBlank String url) throws Exception {
-        return new byte[] {};
+        return QRCodeUtils.gerarQRCode(url);
     }
 }
