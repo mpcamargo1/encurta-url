@@ -3,8 +3,16 @@ package com.encurtaurl.qrcode.utils.print;
 import com.encurtaurl.qrcode.utils.codificador.auxiliares.Contexto;
 import com.encurtaurl.qrcode.utils.print.cor.Cor;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+
 /**
  * Implementa a lógica para imprimir o QRCode.
+ *
+ * @see
+ *   <a href>https://scanova.io/blog/qr-code-structure/</>
  */
 public class QRCodePrinter {
 
@@ -23,7 +31,7 @@ public class QRCodePrinter {
         this.qrCodeCoordenadas = new QRCodeCoordenadas(contexto);
     }
 
-    public Cor[][] desenharQRCode() {
+    public byte[] desenharQRCode() throws IOException {
         int versao = contexto.getParametros().getVersao();
         desenharFindersEDelimitadores(versao);
         desenharTimingPatterns();
@@ -34,9 +42,7 @@ public class QRCodePrinter {
         aplicarMascaraZero();
         aplicarInformacoesDeFormato();
 
-        qrCodeCoordenadas.imprimirNoConsole();
-
-        return qrCodeCoordenadas.getMatrizQRCode();
+        return converterEmImagem();
     }
 
     private void desenharFindersEDelimitadores(int versao) {
@@ -306,5 +312,39 @@ public class QRCodePrinter {
 
         }
 
+    }
+
+    private byte[] converterEmImagem() throws IOException {
+        int escala = 15;
+        int alturaImagem = qrCodeCoordenadas.getTamanhoMatriz();
+        int larguraImagem = alturaImagem;
+
+        BufferedImage image = new BufferedImage(alturaImagem*escala, larguraImagem*escala, BufferedImage.TYPE_INT_RGB);
+
+        int[] bufferImagem = ((java.awt.image.DataBufferInt) (image.getRaster().getDataBuffer())).getData();
+
+        int rgbPreto = Color.WHITE.getRGB();
+        int rgbBranco = Color.BLACK.getRGB();
+
+        for (int y = 0; y < alturaImagem; y++) {
+            for (int x = 0; x < larguraImagem; x++) {
+                Cor corQRCode = qrCodeCoordenadas.getMatrizQRCode()[y][x];
+                int rgbPixel = corQRCode == Cor.PRETO ? rgbBranco : rgbPreto;
+
+                for (int deslocamentoY = 0 ; deslocamentoY < escala ; deslocamentoY++) {
+                    for (int deslocamentoX = 0; deslocamentoX < escala; deslocamentoX++) {
+                        int pixelY = (y * escala) + deslocamentoY;
+                        int pixelX = (x * escala) + deslocamentoX;
+
+                        // Achatamento da matriz para alcançar o endereço na memória RAM
+                        bufferImagem[(pixelY * (larguraImagem*escala)) + pixelX] = rgbPixel;
+                    }
+                }
+            }
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bufferImagem.length);
+        ImageIO.write(image, "png", outputStream);
+        return outputStream.toByteArray();
     }
 }
