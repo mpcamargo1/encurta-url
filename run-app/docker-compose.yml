@@ -163,6 +163,18 @@ services:
       redis-url:
         condition: service_healthy
 
+  qrcode:
+    container_name: qrcode
+    build:
+      context: ../backend/qrcode
+      dockerfile: Dockerfile
+    env_file:
+      - ./qrcode.env
+    networks:
+      - cassandra-net
+    depends_on:
+      - encurta-url
+
   nginx-proxy:
     image: nginx:latest
     container_name: nginx-proxy
@@ -173,6 +185,7 @@ services:
       - ./frontend:/usr/share/nginx/html:ro
     depends_on:
       - encurta-url
+      - qrcode
     networks:
       - cassandra-net
 
