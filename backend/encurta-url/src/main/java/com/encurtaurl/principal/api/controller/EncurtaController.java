@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 public class EncurtaController {
 
@@ -19,7 +21,9 @@ public class EncurtaController {
     @PostMapping("/shorten")
     @Observed(name = "encurtarURL")
     public ResponseEntity<EncurtaResponse> encurtarURL(@Valid @RequestBody EncurtaRequest requisicao) throws Exception {
-        EncurtaResponse resposta = encurtaService.encurtarURL(requisicao.getUrlOriginal());
+        EncurtaResponse resposta = new EncurtaResponse(
+                encurtaService.encurtarURL(requisicao.getUrlOriginal()),
+                URI.create(requisicao.getUrlOriginal()));
 
         return ResponseEntity
                 .created(resposta.getUrlEncurtada())

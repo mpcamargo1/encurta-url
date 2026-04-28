@@ -6,6 +6,7 @@ import com.encurtaurl.principal.api.repository.EncurtaRepository;
 import com.encurtaurl.principal.api.utils.Base62;
 import com.encurtaurl.principal.api.utils.CriaURL;
 import com.encurtaurl.principal.api.utils.Snowflake;
+import com.encurtaurl.principal.api.validacao.url.ValidaURL;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,13 +33,13 @@ public class EncurtaService {
     @Qualifier("redisURL")
     private RedisTemplate<String, String> redisURL;
 
-    public EncurtaResponse encurtarURL(@NotBlank String urlOriginal) throws Exception {
+    public URI encurtarURL(@NotBlank String urlOriginal) throws Exception {
         String hash = Base62.codificar(gerador.gerarId());
         URI urlEncurtada = criaURL.obterURLEncurtada(hash);
         encurtaRepository.save(new URLEncurtada(hash, urlOriginal));
         redisURL.opsForValue().set(hash, urlOriginal);
 
-        return new EncurtaResponse(urlEncurtada, URI.create(urlOriginal));
+        return urlEncurtada;
     }
 
     public ResponseEntity<?> buscarURLOriginal(@NotBlank String hash) throws Exception {

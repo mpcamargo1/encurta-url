@@ -2,8 +2,11 @@ package com.encurtaurl.principal.api.validacao.url;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.stereotype.Component;
+
 import java.util.regex.Pattern;
 
+@Component
 public class ValidaURLImpl implements ConstraintValidator<ValidaURL, String> {
     @Override
     public boolean isValid(String url, ConstraintValidatorContext contexto) {

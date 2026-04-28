@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.encurtaurl.principal.grpc";
+
+service EncurtaService {
+  rpc encurtarURL (EncurtaRequest) returns (EncurtaResponse);
+}
+
+message EncurtaRequest {
+  string url_original = 1;
+}
+
+message EncurtaResponse {
+  string url_curta = 1;
+}
