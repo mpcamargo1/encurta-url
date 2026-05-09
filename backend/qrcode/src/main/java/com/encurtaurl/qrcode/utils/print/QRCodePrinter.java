@@ -315,7 +315,7 @@ public class QRCodePrinter {
     }
 
     private byte[] converterEmImagem() throws IOException {
-        int escala = 15;
+        int escala = 5;
         int alturaImagem = qrCodeCoordenadas.getTamanhoMatriz();
         int larguraImagem = alturaImagem;
 
