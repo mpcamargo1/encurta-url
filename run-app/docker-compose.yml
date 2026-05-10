@@ -146,13 +146,49 @@ services:
       timeout: 3s
       retries: 5
 
+  loki:
+    image: grafana/loki:2.9.10
+    ports:
+      - "3100:3100"
+    command:
+      - "-config.file=/etc/loki/local-config.yaml"
+    networks:
+      - cassandra-net
+    volumes:
+      - ./observabilidade/loki-config-exemplo.yml:/etc/loki/local-config.yaml
+
+  prometheus:
+    image: prom/prometheus:v3.11.3
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=48h'
+      - '--storage.tsdb.retention.size=512MB'
+    networks:
+      - cassandra-net
+    volumes:
+      - ./observabilidade/prometheus-config-exemplo.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:11.3.1-ubuntu
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./observabilidade/grafana-exemplo.env
+    networks:
+      - cassandra-net
+    depends_on:
+      - loki
+      - prometheus
+
   encurta-url:
     container_name: encurta-url
     build:
       context: ../backend/encurta-url
       dockerfile: Dockerfile
     env_file:
-      - ./encurta-url.env
+      - ./env/encurta-url.env
     networks:
       - cassandra-net
     depends_on:
@@ -169,7 +205,7 @@ services:
       context: ../backend/qrcode
       dockerfile: Dockerfile
     env_file:
-      - ./qrcode.env
+      - ./env/qrcode.env
     networks:
       - cassandra-net
     depends_on:
