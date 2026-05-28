@@ -96,10 +96,13 @@ public class CodificadorImpl {
             Contexto ctx = mapaContextoPorVersao.get(i);
             int capacidade = ctx.getParametros().getTamanhoMaximoCaracteres();
 
-            if (quantidadeCaracteres <= capacidade) {
-                ctx.setUrl(url);
-                return ctx;
+            if (quantidadeCaracteres > capacidade) {
+                continue;
             }
+
+            Contexto novoContexto = new Contexto(ctx.getParametros());
+            novoContexto.setUrl(url);
+            return novoContexto;
         }
 
         throw new Exception("Não foi possível encontrar uma versão do QRCode para codificar");
