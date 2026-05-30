@@ -1,3 +1,9 @@
+ALTER KEYSPACE system_auth
+WITH replication = {
+  'class': 'NetworkTopologyStrategy',
+  'datacenter1': 3
+};
+
 CREATE KEYSPACE IF NOT EXISTS e_url_keyspace
 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
 
