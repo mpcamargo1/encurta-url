@@ -21,10 +21,16 @@ services:
       - MAX_HEAP_SIZE=512M
     volumes:
       - cassandra_data_1:/var/lib/cassandra
+    command: >
+      bash -c "
+      sed -i 's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/g' /etc/cassandra/cassandra.yaml &&
+      sed -i 's/authorizer: AllowAllAuthorizer/authorizer: CassandraAuthorizer/g' /etc/cassandra/cassandra.yaml &&
+      /usr/local/bin/docker-entrypoint.sh cassandra -f
+      "
     networks:
       - cassandra-net
     healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      test: ["CMD-SHELL", "nodetool status | grep -q 'UN'"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -35,7 +41,7 @@ services:
     logging: *default-logging
     container_name: cassandra-node2
     environment:
-      - CASSANDRA_SEEDS=cassandra-node1, cassandra-node2
+      - CASSANDRA_SEEDS=cassandra-node1,cassandra-node2
       - CASSANDRA_CLUSTER_NAME=EncurtaURLCluster
       - CASSANDRA_DC=datacenter1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
@@ -45,10 +51,16 @@ services:
       - MAX_HEAP_SIZE=512M
     volumes:
       - cassandra_data_2:/var/lib/cassandra
+    command: >
+      bash -c "
+      sed -i 's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/g' /etc/cassandra/cassandra.yaml &&
+      sed -i 's/authorizer: AllowAllAuthorizer/authorizer: CassandraAuthorizer/g' /etc/cassandra/cassandra.yaml &&
+      /usr/local/bin/docker-entrypoint.sh cassandra -f
+      "
     networks:
       - cassandra-net
     healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      test: ["CMD-SHELL", "nodetool status | grep -q 'UN'"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -72,10 +84,16 @@ services:
       - MAX_HEAP_SIZE=512M
     volumes:
       - cassandra_data_3:/var/lib/cassandra
+    command: >
+      bash -c "
+      sed -i 's/authenticator: AllowAllAuthenticator/authenticator: PasswordAuthenticator/g' /etc/cassandra/cassandra.yaml &&
+      sed -i 's/authorizer: AllowAllAuthorizer/authorizer: CassandraAuthorizer/g' /etc/cassandra/cassandra.yaml &&
+      /usr/local/bin/docker-entrypoint.sh cassandra -f
+      "
     networks:
       - cassandra-net
     healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      test: ["CMD-SHELL", "nodetool status | grep -q 'UN'"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -92,13 +110,24 @@ services:
     container_name: cassandra-init
     volumes:
       - ./init.cql:/init.cql
-    command: >
-      bash -c "echo 'Aguardando Cassandra...' &&
-      sleep 05 &&
-      cqlsh --request-timeout=90 cassandra-node1 -f /init.cql &&
-      echo 'Script init.cql executado com sucesso!'"
-    networks:
-      - cassandra-net
+    network_mode: "service:cassandra-1"
+    command: |
+      bash -c "
+      NODES=('cassandra-node1' 'cassandra-node2' 'cassandra-node3')
+
+      for node in $${NODES[@]}; do
+        echo \"Verificando saúde do nó: $$node... \" &&
+        until cqlsh -u cassandra -p cassandra \"$$node\" -e 'describe keyspaces' > /dev/null 2>&1; do
+          echo \"Aguardando Gossip e QUORUM (tentando novamente em 5s)...\" && sleep 5;
+        done
+      done
+
+      echo 'Cluster 100% pronto! Executando init.cql...' &&
+      cqlsh -u cassandra -p cassandra --request-timeout=90 cassandra-node1 -f /init.cql &&
+      echo 'Script init.cql executado com sucesso'!
+      echo 'Sincronizando system_auth em todos os nós' &&
+      nodetool repair system_auth
+      "
     depends_on:
       cassandra-1:
         condition: service_healthy
