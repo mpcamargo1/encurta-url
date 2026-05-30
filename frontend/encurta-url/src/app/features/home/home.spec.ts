@@ -10,14 +10,16 @@ describe('Home', () => {
     await TestBed.configureTestingModule({
       imports: [Home]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
     await fixture.whenStable();
+
   });
 
-  it('should create', () => {
+  it('deve ser criado', () => {
     expect(component).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('app-encurtar-link-form')).toBeTruthy();
   });
 });

@@ -8,16 +8,15 @@ describe('Page404', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Page404]
-    })
-    .compileComponents();
+      imports: [Page404],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Page404);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
 
-  it('should create', () => {
+  it('deve ser criado', () => {
     expect(component).toBeTruthy();
   });
 });
