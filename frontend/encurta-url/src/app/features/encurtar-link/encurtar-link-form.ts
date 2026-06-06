@@ -40,7 +40,7 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
       longUrl: new FormControl('', [
         Validators.required,
         Validators.maxLength(2048),
-        Validators.pattern(/^https?:\/\/([\w\d\-_]+\.)+[a-z]{2,}(?:\/.*)?$/i),
+        Validators.pattern(/^(https?:\/\/)(?=(w{3}\.)*)\2([0-9a-zA-Z.]{2,})(\.[a-z]{2,})(\/.*)?$/),
       ]),
     });
   }
