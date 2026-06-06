@@ -108,7 +108,10 @@ describe('EncurtarLinkForm', () => {
 
     control.setValue('www.google.com');
 
-    component.formatUrl();
+    const input = fixture.nativeElement.querySelector('input');
+
+    input.dispatchEvent(new Event('blur'));
+
     expect(control.value).toBe('https://www.google.com');
   });
 
@@ -117,7 +120,10 @@ describe('EncurtarLinkForm', () => {
 
     control.setValue('https://www.google.com');
 
-    component.formatUrl();
+    const input = fixture.nativeElement.querySelector('input');
+
+    input.dispatchEvent(new Event('blur'));
+
     expect(control.value).toBe('https://www.google.com');
   });
 });
