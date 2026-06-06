@@ -1,23 +1,25 @@
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EncurtarLinkRequest } from './EncurtarLinkRequest';
-import { EncurtarLinkService } from './encurtar-link-service';
-import { MessagesService } from '../../shared/components/message-box/messages-service';
-import { EncurtarLinkResponse } from './EncurtarLinkResponse';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { finalize, Subscription, timeout } from 'rxjs';
 import { MESSAGES } from '../../shared/components/message-box/MESSAGES';
+import { MessagesService } from '../../shared/components/message-box/messages-service';
+import { EncurtarLinkRequest } from './EncurtarLinkRequest';
+import { EncurtarLinkResponse } from './EncurtarLinkResponse';
+import { EncurtarLinkService } from './encurtar-link-service';
 
 @Component({
   selector: 'app-encurtar-link-form',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './encurtar-link-form.html',
   styleUrl: './encurtar-link-form.css',
 })
 export class EncurtarLinkForm implements OnInit, OnDestroy {
-
   encurtaForm!: FormGroup;
 
   response!: EncurtarLinkResponse;
@@ -28,16 +30,18 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
 
   private responseSubscription!: Subscription;
 
-  constructor(private encurtaService: EncurtarLinkService, private messagesService: MessagesService) { }
+  constructor(
+    private encurtaService: EncurtarLinkService,
+    private messagesService: MessagesService,
+  ) {}
 
   ngOnInit(): void {
     this.encurtaForm = new FormGroup({
-      longUrl: new FormControl('',
-        [
-          Validators.required,
-          Validators.maxLength(2048),
-          Validators.pattern(/^https?:\/\/([\w\d\-_]+\.)+[a-z]{2,}(?:\/.*)?$/i)
-        ])
+      longUrl: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(2048),
+        Validators.pattern(/^https?:\/\/([\w\d\-_]+\.)+[a-z]{2,}(?:\/.*)?$/i),
+      ]),
     });
   }
 
@@ -50,6 +54,8 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
   submit() {
     this.isSubmitted.set(true);
 
+    this.formatUrl();
+
     if (this.encurtaForm.invalid) {
       return;
     }
@@ -60,29 +66,27 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
 
     const request: EncurtarLinkRequest = { longUrl: longUrl };
 
-    this.encurtaService.encurtarURL(request)
+    this.encurtaService
+      .encurtarURL(request)
       .pipe(
         timeout(30000),
-        finalize(() => this.waitingResponse.set(false)))
+        finalize(() => this.waitingResponse.set(false)),
+      )
       .subscribe({
         next: (res) => {
-          this.messagesService.addMessage(MESSAGES.LINK_SUCCESS(res.shortUrl))
+          this.messagesService.addMessage(MESSAGES.LINK_SUCCESS(res.shortUrl));
         },
         error: (err) => {
-
-          let errorMessage = 'Ocorreu um erro inesperado.'
+          let errorMessage = 'Ocorreu um erro inesperado.';
 
           if (err.name === 'TimeoutError') {
-            errorMessage = 'O Servidor demorou muito para responder. Tente novamente mais tarde.'
-
-          }
-          else if (err.error?.errors && err.error.errors.length > 0) {
-
+            errorMessage = 'O Servidor demorou muito para responder. Tente novamente mais tarde.';
+          } else if (err.error?.errors && err.error.errors.length > 0) {
             errorMessage = err.error.errors[0].defaultMessage;
           }
 
           this.messagesService.addMessage(MESSAGES.API_ERROR(errorMessage));
-        }
+        },
       });
   }
 
