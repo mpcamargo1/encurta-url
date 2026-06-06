@@ -64,6 +64,7 @@ describe('EncurtarLinkForm', () => {
         { label: 'estar sem protocolo', value: 'www.google.com' },
         { label: 'ter espaços em branco', value: 'http://site .com' },
         { label: 'ter apenas caracteres especiais', value: 'https://???' },
+        { label: 'não ter TLD', value: 'https://www.google' },
         { label: 'TLD muito curto', value: 'https://www.google.c' },
       ];
 
