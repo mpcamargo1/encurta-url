@@ -13,7 +13,13 @@
         }
        </button>
     </div>
-  </form>
+    <div id="toggle-btn-container">
+      <p id="generate-qrcode-tip">Gerar QR Code</p>
+      <button id="toggle-qrcode-btn" type="button" class="toggle-btn" [class.checked]="isGenerateQrCode" (click)="toggleGenerateQrCode()" role="switch" [attr.aria-checked]="isGenerateQrCode">
+        <span class="toggle-btn-slider"></span>
+      </button>
+    </div>
+</form>
 @if (isSubmitted() && longUrl.invalid) {
   <div class="validation-error-hint">
     <i class="fa-solid fa-circle-exclamation"></i>
