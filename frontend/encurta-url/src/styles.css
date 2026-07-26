@@ -69,3 +69,39 @@ a {
 .validation-error-hint i {
   font-size: xx-large;
 }
+
+.toggle-btn {
+  background-color: #cbd5e1;
+  border: none;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.25s ease-in-out;
+  padding: 2px;
+  outline: none;
+  width: 52px;
+  height: 28px;
+}
+
+.toggle-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+.toggle-btn-slider {
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.25s ease-in-out;
+  transform: translateX(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn.checked {
+  background-color: hsl(var(--primary));
+}
+
+.toggle-btn.checked .toggle-btn-slider {
+  transform: translateX(24px);
+}

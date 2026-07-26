@@ -42,6 +42,7 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
         Validators.maxLength(2048),
         Validators.pattern(/^(https?:\/\/)(?=(w{3}\.)*)\2([0-9a-zA-Z.]{2,})(\.[a-z]{2,})(\/.*)?$/),
       ]),
+      isGenerateQrCode: new FormControl(false, { nonNullable: true }),
     });
   }
 
@@ -101,5 +102,15 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
 
   get longUrl() {
     return this.encurtaForm.get('longUrl')!;
+  }
+
+  toggleGenerateQrCode() {
+    const control = this.encurtaForm.get('isGenerateQrCode');
+    control?.setValue(!control.value);
+    control?.markAsTouched();
+  }
+
+  get isGenerateQrCode() {
+    return this.encurtaForm.get('isGenerateQrCode')?.value;
   }
 }
