@@ -12,5 +12,11 @@ export const MESSAGES = {
         header: 'Erro ao realizar operação',
         body: `Erro: ${errorMessage}`,
         type: 'error',
-    })
+    }),
+
+    API_TIMEOUT_ERROR: (): Message =>
+        MESSAGES.API_ERROR('O Servidor demorou muito para responder. Tente novamente mais tarde.'),
+
+    API_UNEXPECTED_ERROR: (): Message =>
+        MESSAGES.API_ERROR('Ocorreu um erro inesperado.')
 };

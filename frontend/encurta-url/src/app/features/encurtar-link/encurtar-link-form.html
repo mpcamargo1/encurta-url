@@ -4,8 +4,8 @@
         <input type="text" (blur)="formatUrl()" (input)="isSubmitted.set(false)" placeholder="Cole sua URL longa aqui..." required formControlName="longUrl"/>
     </div>
     <div id="btn-container">
-       <button id = "encurtar-btn" class="primary-color-btn" type="submit" [disabled]="waitingResponse()">
-        @if(waitingResponse()) {
+       <button id = "encurtar-btn" class="primary-color-btn" type="submit" [disabled]="encurtaService.waitingResponse()">
+        @if(encurtaService.waitingResponse()) {
           <span class="spinner"></span>
         }
         @else {
