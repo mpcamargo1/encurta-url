@@ -5,11 +5,23 @@
       <button class= "primary-color-btn"(click)="messagesService.clearMessage()">×</button>
     </div>
 
-    @if (msg.name === 'linkEncurtado') {
-      <app-copy-field [textToCopy]="msg.body" [isLink]="true" />
-    } 
-    @else {
-      <p>{{ msg.body }}</p>
-    }
+    <div id="message-box-body">
+
+      @if (msg.name === 'linkEncurtado') {
+        <app-copy-field [textToCopy]="msg.body" [isLink]="true" />
+      }
+      @else if(msg.name === 'qrcodeGerado'){
+        <img id="qrcode-img" [src]="msg.body" alt="Imagem que representa o QR code gerado" />
+        <a id="qrcode-download-container" [href]="msg.body" download="qr-code.png">
+          <div id="qrcode-download-container">
+            <i class="fa-solid fa-download"></i>
+            <p>Baixar</p>
+          </div>
+        </a>
+      } 
+      @else {
+        <p>{{ msg.body }}</p>
+      }
+    </div>
   </div>
 }
