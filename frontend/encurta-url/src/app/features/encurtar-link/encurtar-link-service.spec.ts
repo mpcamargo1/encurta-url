@@ -10,6 +10,7 @@ import { MessagesService } from '../../shared/components/message-box/messages-se
 import { EncurtarLinkService } from './encurtar-link-service';
 import { EncurtarLinkRequest } from './EncurtarLinkRequest';
 import { EncurtarLinkResponse } from './EncurtarLinkResponse';
+import { EncurtarLinkToQrCodeRequest } from './EncurtarLinkToQrCodeRequest';
 
 describe('EncurtarLinkService', () => {
   let service: EncurtarLinkService;
@@ -79,6 +80,27 @@ describe('EncurtarLinkService', () => {
     req.flush(resp);
 
     expect(messagesService.addMessage).toHaveBeenCalledWith(MESSAGES.LINK_SUCCESS('https://encurtaurl.net/1lT0Z1MeWW'));
+    expect(service.waitingResponse()).toBe(false);
+  });
+
+  it('deve gerar QR Code do link corretamente', () => {
+    const request: EncurtarLinkToQrCodeRequest = { url: 'https://youtube.com' };
+
+    service.encurtarURLParaQrCode(request);
+
+    expect(service.waitingResponse()).toBe(true);
+
+    const urlEsperada = `${environment.baseApiUrl}/qrcode`;
+
+    const req = httpMock.expectOne(urlEsperada);
+
+    expect(req.request.method).toBe('POST');
+
+    const emptyBlob = new Blob([]);
+
+    req.flush(emptyBlob);
+
+    expect(messagesService.addMessage).toHaveBeenCalled();
     expect(service.waitingResponse()).toBe(false);
   });
 

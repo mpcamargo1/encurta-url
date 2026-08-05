@@ -9,6 +9,7 @@ import {
 import { Subscription } from 'rxjs';
 import { EncurtarLinkService } from './encurtar-link-service';
 import { EncurtarLinkRequest } from './EncurtarLinkRequest';
+import { EncurtarLinkToQrCodeRequest } from './EncurtarLinkToQrCodeRequest';
 
 @Component({
   selector: 'app-encurtar-link-form',
@@ -52,10 +53,18 @@ export class EncurtarLinkForm implements OnInit, OnDestroy {
     }
 
     const longUrl: string = this.encurtaForm.get('longUrl')!.value;
-    
-    const request: EncurtarLinkRequest = { longUrl: longUrl };
 
-    this.encurtaService.encurtarURL(request);
+    if (this.isGenerateQrCode) {
+      const request: EncurtarLinkToQrCodeRequest = { url: longUrl };
+
+      this.encurtaService.encurtarURLParaQrCode(request);
+
+    }
+    else {
+      const request: EncurtarLinkRequest = { longUrl: longUrl };
+
+      this.encurtaService.encurtarURL(request);
+    }
   }
 
   formatUrl() {

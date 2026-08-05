@@ -8,6 +8,13 @@ export const MESSAGES = {
         type: 'information',
     }),
 
+    QRCODE_SUCCESS: (qrCodeImgUrl: string): Message => ({
+        name: "qrcodeGerado",
+        header: 'QR Code Gerado:',
+        body: qrCodeImgUrl,
+        type: 'information',
+    }),
+
     API_ERROR: (errorMessage: string): Message => ({
         header: 'Erro ao realizar operação',
         body: `Erro: ${errorMessage}`,
