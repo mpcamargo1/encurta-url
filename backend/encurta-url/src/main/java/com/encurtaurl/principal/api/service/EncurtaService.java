@@ -1,12 +1,10 @@
 package com.encurtaurl.principal.api.service;
 
-import com.encurtaurl.principal.api.model.DTOs.EncurtaResponse;
 import com.encurtaurl.principal.api.model.entidade.URLEncurtada;
 import com.encurtaurl.principal.api.repository.EncurtaRepository;
 import com.encurtaurl.principal.api.utils.Base62;
 import com.encurtaurl.principal.api.utils.CriaURL;
 import com.encurtaurl.principal.api.utils.Snowflake;
-import com.encurtaurl.principal.api.validacao.url.ValidaURL;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,7 +40,11 @@ public class EncurtaService {
         return urlEncurtada;
     }
 
-    public ResponseEntity<?> buscarURLOriginal(@NotBlank String hash) throws Exception {
+    public ResponseEntity<?> buscarURLOriginal(@NotBlank String hash) {
+        if (!Base62.isChaveValida(hash)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
         String cache = redisURL.opsForValue().get(hash);
 
         String urlOriginal = Optional.ofNullable(cache)

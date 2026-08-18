@@ -2,6 +2,7 @@ package com.encurtaurl.principal.api.utils;
 
 import com.encurtaurl.principal.api.exception.ChaveInvalidaException;
 import com.encurtaurl.principal.api.exception.IDInvalidoException;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 
@@ -60,5 +61,30 @@ public class Base62 {
         }
 
         return acumulador;
+    }
+
+    /**
+     * Verifica se a chave obedece o padrão estabelecido pela codificação em Base 62.
+     *
+     * @param chaveBase62
+     *   Chave ({@code Hash}) a ser verificada.
+     *
+     * @return
+     *   {@code Flag} indicando se a chave é válida.
+     */
+    public static boolean isChaveValida(String chaveBase62) {
+        if (!StringUtils.hasLength(chaveBase62)) {
+            return false;
+        }
+
+        for (int i = 0; i < chaveBase62.length(); i++) {
+            char c = chaveBase62.charAt(i);
+
+            if (mapaInverso.get(c) == null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
