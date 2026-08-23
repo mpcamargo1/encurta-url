@@ -5,7 +5,12 @@ import com.encurtaurl.principal.api.exception.IDInvalidoException;
 import com.encurtaurl.principal.api.utils.Base62;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+/**
+ * Implementação de testes unitários referente à operação de codificação e decodificação em Base62.
+ */
 public class Base62Tests {
 
     @Test
@@ -20,6 +25,26 @@ public class Base62Tests {
     @Test
     void deveCodificarIdentificadorMaxLongComSucesso() {
         Assertions.assertEquals("AzL8n0Y58m7", Base62.codificar(Long.MAX_VALUE));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Á@#%%",
+            "hnbHBA$",
+            "mpc%",
+            "154848*",
+            "1548484.148",
+            "=-%¨&",
+            "abc 123",
+            "encurta-url",
+            "encurta_url",
+            "encurta.url",
+            "✌️encurtaurl",
+            "encurtaurl\t123",
+            ""
+    })
+    void deveIdentificarCorretamenteChavesInvalidas(String chave) {
+        Assertions.assertFalse(Base62.isChaveValida(chave));
     }
 
     @Test
