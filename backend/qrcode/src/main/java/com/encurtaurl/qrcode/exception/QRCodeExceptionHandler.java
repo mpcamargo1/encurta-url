@@ -48,6 +48,32 @@ public class QRCodeExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleHttpRequestMethodNotSupported(ex, headers, status, request);
     }
 
+    /**
+     * Manipula o retorno para quando a exceção for decorrente de uma URL inválida.
+     *
+     * @param exception
+     *   Exceção ocorrida.
+     * @param httpServletRequest
+     *   Requisição efetuada.
+     *
+     * @return
+     *   Resposta a ser devolvida pela API.
+     */
+    @ExceptionHandler(URLInvalidaException.class)
+    public ResponseEntity<Object> handleURLInvalidaException(
+            Exception exception,
+            HttpServletRequest httpServletRequest) {
+
+        logger.error(exception.getMessage());
+
+        Map<String, Object> corpo = new HashMap<>();
+        corpo.put("status", HttpStatus.BAD_REQUEST.value());
+        corpo.put("erro", "URL inválida");
+        corpo.put("mensagem", "A URL é inválida. Impossível codificar a URL em um QRCode.");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(corpo);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(
             Exception exception,
