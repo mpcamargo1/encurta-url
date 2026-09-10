@@ -42,15 +42,15 @@ public abstract class AbstractIntegrationTest {
                 .withInitScript(".docker/infrastructure/init.cql");
 
         redisSnowflake = new GenericContainer<>("redis:7.2-alpine")
-                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_SNOWFLAKE_PORT")))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
         redisURL = new GenericContainer<>("redis:7.2-alpine")
-                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_URL_PORT")))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
         redisRequest = new GenericContainer<>("redis:7.2-alpine")
-                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_PORT")))
+                .withExposedPorts(Integer.parseInt(System.getenv("REDIS_REQUEST_PORT")))
                 .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
         cassandra.start();
@@ -70,16 +70,16 @@ public abstract class AbstractIntegrationTest {
         // Redis Snowflake
         registry.add("redis.snowflake.host", redisSnowflake::getHost);
         registry.add("redis.snowflake.port", () -> redisSnowflake.getMappedPort(
-                Integer.parseInt(System.getenv("REDIS_PORT"))));
+                Integer.parseInt(System.getenv("REDIS_SNOWFLAKE_PORT"))));
 
         // Redis URL
         registry.add("redis.url.host", redisURL::getHost);
         registry.add("redis.url.port", () -> redisURL.getMappedPort(
-                Integer.parseInt(System.getenv("REDIS_PORT"))));
+                Integer.parseInt(System.getenv("REDIS_URL_PORT"))));
 
         // Redis Request
         registry.add("redis.request.host", redisRequest::getHost);
         registry.add("redis.request.port", () -> redisRequest.getMappedPort(
-                Integer.parseInt(System.getenv("REDIS_PORT"))));
+                Integer.parseInt(System.getenv("REDIS_REQUEST_PORT"))));
     }
 }
