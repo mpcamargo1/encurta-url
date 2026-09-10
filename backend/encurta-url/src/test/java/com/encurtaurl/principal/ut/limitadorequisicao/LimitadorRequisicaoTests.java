@@ -1,6 +1,6 @@
 package com.encurtaurl.principal.ut.limitadorequisicao;
 
-import com.encurtaurl.principal.api.config.LimitadorRequisicaoFilter;
+import com.nucleo.filter.LimitadorRequisicaoFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

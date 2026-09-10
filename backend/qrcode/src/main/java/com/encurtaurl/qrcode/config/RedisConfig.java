@@ -1,0 +1,99 @@
+package com.encurtaurl.qrcode.config;
+
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+import java.time.Duration;
+
+@Configuration
+public class RedisConfig {
+
+    // Definição das Propriedades da Request
+    @Bean
+    @ConfigurationProperties(prefix = "redis.request")
+    public RedisInstanceConfig createRedisRequestInstanceConfig() {
+        return new RedisInstanceConfig();
+    }
+
+    // Função auxiliar para montar a Factory
+    private LettuceConnectionFactory buildConnectionFactory(RedisInstanceConfig config) {
+        SocketOptions socketOptions = SocketOptions.builder()
+                .connectTimeout(Duration.ofMillis(config.getConnectTimeout()))
+                .build();
+
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .commandTimeout(Duration.ofMillis(config.getTimeout()))
+                .clientOptions(ClientOptions.builder().socketOptions(socketOptions).build())
+                .build();
+
+        RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(config.getHost(), config.getPort());
+
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(serverConfig, clientConfig);
+        factory.afterPropertiesSet();
+        return factory;
+    }
+
+    // Cria Instância Redis para as Requests
+    @Bean(name = "redisRequest")
+    public RedisTemplate<String, String> requestTemplate(
+            @Qualifier("createRedisRequestInstanceConfig") RedisInstanceConfig config) {
+        return createTemplate(buildConnectionFactory(config));
+    }
+
+    private RedisTemplate<String, String> createTemplate(LettuceConnectionFactory factory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(factory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        return template;
+    }
+
+    public static class RedisInstanceConfig {
+        private String host;
+        private int port;
+        private int timeout;
+        private int connectTimeout;
+
+        public String getHost() {
+            return host;
+        }
+
+        public void setHost(String host) {
+            this.host = host;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(int timeout) {
+            this.timeout = timeout;
+        }
+
+        public int getConnectTimeout() {
+            return connectTimeout;
+        }
+
+        public void setConnectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+        }
+    }
+}
+

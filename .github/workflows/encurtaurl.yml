@@ -24,8 +24,8 @@ jobs:
         cache: maven
 
     - name: Unit test
-      run: mvn -B test --file pom.xml
-      working-directory: backend/encurta-url/
+      run: mvn -B test -pl encurta-url -am
+      working-directory: backend/
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Atualiza grafo de dependências
@@ -48,8 +48,8 @@ jobs:
         cache: maven
 
     - name: Integration test
-      run: mvn -B verify --file pom.xml
-      working-directory: backend/encurta-url/
+      run: mvn -B verify -pl encurta-url -am
+      working-directory: backend/
       env:
         REDIS_PORT: ${{secrets.REDIS_PORT}}
         GRPC_SERVER_PORT: ${{secrets.GRPC_SERVER_PORT}}
@@ -88,7 +88,7 @@ jobs:
       - name: Build e push da imagem
         uses: docker/build-push-action@v5
         with:
-          context: backend/encurta-url/
+          context: backend/
           file: backend/encurta-url/Dockerfile
           tags: ${{ steps.login-ecr.outputs.registry }}/${{secrets.AWS_ENCURTAURL_REPOSITORY_NAME}}:latest
           push: true

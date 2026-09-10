@@ -107,6 +107,11 @@
 			<artifactId>guava</artifactId>
 			<version>32.1.3-jre</version>
 		</dependency>
+		<dependency>
+			<groupId>com.nucleo</groupId>
+			<artifactId>nucleo</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>

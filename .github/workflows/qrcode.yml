@@ -22,8 +22,8 @@ jobs:
         cache: maven
 
     - name: Unit test
-      run: mvn -B test --file pom.xml
-      working-directory: backend/qrcode/
+      run: mvn -B test -pl qrcode -am
+      working-directory: backend/
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Atualiza grafo de dependências
@@ -59,7 +59,7 @@ jobs:
       - name: Build e push da imagem
         uses: docker/build-push-action@v5
         with:
-          context: backend/qrcode/
+          context: backend/
           file: backend/qrcode/Dockerfile
           tags: ${{ steps.login-ecr.outputs.registry }}/${{secrets.AWS_QRCODE_REPOSITORY_NAME}}:latest
           push: true

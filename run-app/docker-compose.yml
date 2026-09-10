@@ -214,8 +214,8 @@ services:
   encurta-url:
     container_name: encurta-url
     build:
-      context: ../backend/encurta-url
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: encurta-url/Dockerfile
     env_file:
       - ./env/encurta-url.env
     networks:
@@ -231,8 +231,8 @@ services:
   qrcode:
     container_name: qrcode
     build:
-      context: ../backend/qrcode
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: qrcode/Dockerfile
     env_file:
       - ./env/qrcode.env
     networks:

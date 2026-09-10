@@ -1,4 +1,4 @@
-package com.encurtaurl.principal.api.config;
+package com.nucleo.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit;
 @Order(0)
 public class LimitadorRequisicaoFilter implements Filter {
 
-    @Value("${encurtaurl.limitadorchamada.maximo-requisicao}")
+    @Value("${nucleo.limitadorchamada.maximo-requisicao}")
     private int maximoRequisicao;
 
-    @Value("${encurtaurl.limitadorchamada.intervalo}")
+    @Value("${nucleo.limitadorchamada.intervalo}")
     private int intervalo;
 
     @Autowired
