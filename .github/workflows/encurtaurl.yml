@@ -96,18 +96,4 @@ jobs:
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Atualizar EC2
-        run: |
-          aws ssm send-command \
-            --instance-ids "${{ secrets.AWS_INSTANCE_IDS }}" \
-            --document-name "${{ secrets.AWS_DOCUMENT_NAME }}" \
-            --region ${{ secrets.AWS_REGION }} \
-            --parameters "commands=[
-              \"cd ${{ secrets.AWS_PROJECT_PATH }}\",
-              \"aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}\",
-              \"docker compose pull\",
-              \"docker compose up -d\",
-              \"docker logout ${{ steps.login-ecr.outputs.registry }}\",
-              \"docker image prune -f\"
-            ]"
+    
